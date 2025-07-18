@@ -4,11 +4,14 @@
 
 import { useRouter } from 'next/navigation';
 import Dashboard from '@/components/Dashboard';
-import PageTransition from '@/components/PageTransition'; // ini yang penting 🦋
+import PageTransition from '@/components/PageTransition';
 import useAuthGuard from '@/utils/useAuthGuard';
 
 export default function DashboardPage() {
   const router = useRouter();
+
+  // Auth guard hook must be called inside the component
+  useAuthGuard();
 
   return (
     <PageTransition>
@@ -16,7 +19,3 @@ export default function DashboardPage() {
     </PageTransition>
   );
 }
-// src/app/dashboard/page.tsx
-// 1. Buat halaman untuk dashboard: src/app/dashboard/page.tsx
-useAuthGuard();
-// src/app/dashboard/page.tsx

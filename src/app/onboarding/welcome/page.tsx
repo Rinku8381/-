@@ -10,8 +10,10 @@ export default function WelcomePage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Auth guard hook must be called inside the component
+  useAuthGuard();
+
   useEffect(() => {
-    useAuthGuard();
     setIsAuthenticated(true);
   }, []);
 
@@ -21,11 +23,7 @@ export default function WelcomePage() {
 
   return (
     <PageTransition>
-      <WelcomeComplete
-        onToDashboard={() => router.push('/dashboard')}
-      />
+      <WelcomeComplete onToDashboard={() => router.push('/dashboard')} />
     </PageTransition>
   );
 }
-
-useAuthGuard();

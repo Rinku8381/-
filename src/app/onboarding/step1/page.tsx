@@ -10,8 +10,10 @@ export default function Step1Page() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Auth guard hook must be called at component level
+  useAuthGuard();
+
   useEffect(() => {
-    useAuthGuard();
     setIsAuthenticated(true);
   }, []);
 

@@ -105,7 +105,7 @@ export default function TermsModal({
             <p>
               You retain ownership of your personal data and can request
               deletion at any time. You are obligated to provide accurate age
-              verification, maintain system security, and respect the AI's
+              verification, maintain system security, and respect the AI&apos;s
               learning boundaries. Harassment or abuse of the AI system is
               strictly prohibited.
             </p>

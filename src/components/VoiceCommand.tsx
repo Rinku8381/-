@@ -171,7 +171,7 @@ export default function VoiceCommand({
 
       {transcript && (
         <div className={styles.transcript}>
-          <p>"{transcript}"</p>
+          <p>&ldquo;{transcript}&rdquo;</p>
         </div>
       )}
     </div>
