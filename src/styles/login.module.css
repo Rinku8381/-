@@ -1,0 +1,552 @@
+/* === Splash Container === */
+.splash-container {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  width: 100%;
+  background: #010116;
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+  font-family: 'Orbitron', sans-serif;
+  padding-top: 60px;
+  box-sizing: border-box;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 12px;
+  width: 20px;
+  height: 20px;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.formInput {
+  padding-left: 40px; /* space untuk icon di kiri */
+}
+
+.starlight-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 70%),
+              radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.04) 0%, transparent 80%),
+              radial-gradient(circle at 50% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 90%);
+  animation: starlightPulse 6s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
+}
+
+@keyframes starlightPulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.5;
+    transform: scale(1.03);
+  }
+}
+
+.rising-particle {
+  position: absolute;
+  bottom: -10px;
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(to top, rgba(0,255,255,0.4), transparent);
+  opacity: 0.5;
+  animation: rise 8s linear infinite;
+  z-index: 1;
+  transform-origin: bottom center;
+}
+
+.rising-particle:nth-child(odd) {
+  animation-duration: 8s;
+  width: 1px;
+  background: linear-gradient(to top, rgba(255,0,255,0.3), transparent);
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0) scaleX(1);
+    opacity: 0.2;
+  }
+  30% {
+    opacity: 0.7;
+  }
+  70% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-150vh) scaleX(1.2);
+    opacity: 0;
+  }
+}
+
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(0, 255, 255, 0.7);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.9);
+  animation: float 12s infinite ease-in-out, flicker 2.5s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 2;
+  transform-origin: center center;
+}
+
+.firefly.tiny {
+  width: 3px;
+  height: 3px;
+  filter: blur(4px);
+  opacity: 0.3;
+}
+
+/* Warna tambahan */
+.firefly.cyan {
+  background: rgba(0, 255, 255, 0.8);
+  box-shadow: 0 0 10px #0ff;
+}
+.firefly.magenta {
+  background: rgba(255, 0, 255, 0.7);
+  box-shadow: 0 0 10px #f0f;
+}
+.firefly.purple {
+  background: rgba(140, 0, 255, 0.6);
+  box-shadow: 0 0 12px #a070ff;
+}
+.firefly.gold {
+  background: rgba(255, 215, 0, 0.7);
+  box-shadow: 0 0 12px #ffd700;
+}
+.firefly.blue {
+  background: rgba(0, 153, 255, 0.7);
+  box-shadow: 0 0 10px #3399ff;
+}
+
+@keyframes float {
+  0% { transform: translateY(0) translateX(0); }
+  30% { transform: translateY(-40px) translateX(20px); }
+  70% { transform: translateY(-20px) translateX(-10px); }
+  100% { transform: translateY(0) translateX(0); }
+}
+
+@keyframes flicker {
+  0%   { opacity: 0.1; transform: scale(1); }
+  25%  { opacity: 0.6; transform: scale(1.2); }
+  50%  { opacity: 1; transform: scale(0.8); }
+  75%  { opacity: 0.4; transform: scale(1.1); }
+  100% { opacity: 0.1; transform: scale(1); }
+}
+
+.effects-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.splash-container::before {
+  content: '';
+  background: url('/assets/splash/splash-bg.png') no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+/* === Logo (Top-Right) === */
+.splash-logo {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  width: 80px;
+  z-index: 4;
+}
+
+/* === Title === */
+.splash-title {
+  font-size: 48px;
+  font-weight: 800;
+  color: #00f0ff;
+  text-shadow: 0 0 10px #00f0ff, 0 0 30px #00f0ff;
+  margin-bottom: 20px;
+  z-index: 3;
+}
+
+/* === Avatar & Glow === */
+.avatar-wrapper {
+  position: relative;
+  z-index: 2;
+  transform: translateY(100px);
+}
+
+.avatar-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 500px;
+  height: 500px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(0,255,255,0.6) 0%, transparent 80%);
+  filter: blur(100px);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.splash-avatar {
+  max-height: 520px;
+  width: auto;
+  z-index: 2;
+}
+
+/* === Terms Screen === */
+.termsContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.visible {
+  opacity: 1;
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.termsContent {
+  background: #010116;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.termsTitle {
+  color: #00f0ff;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.termsText {
+  color: #fff;
+  margin-bottom: 2rem;
+}
+
+.termsButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.acceptButton, .declineButton {
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.acceptButton {
+  background: #00f0ff;
+  color: #010116;
+}
+
+.declineButton {
+  background: #ff0000;
+  color: #fff;
+}
+
+/* === Login Screen === */
+.loginContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #010116;
+}
+
+.loginContent {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.loginTitle {
+  color: #00f0ff;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formLabel {
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.formInput {
+  padding: 0.8rem;
+  border: 1px solid #00f0ff;
+  border-radius: 8px;
+  background: #010116;
+  color: #fff;
+}
+
+.loginButton {
+  padding: 0.8rem;
+  background: #00f0ff;
+  border: none;
+  border-radius: 8px;
+  color: #010116;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.error {
+  color: #ff0000;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* === Onboarding Screens === */
+.onboardingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #010116;
+}
+
+.onboardingContent {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.onboardingTitle {
+  color: #00f0ff;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.onboardingText {
+  color: #fff;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.onboardingProgress {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.progressStep {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progressNumber {
+  color: #00f0ff;
+  font-weight: 600;
+}
+
+.onboardingButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.nextButton, .backButton, .skipButton {
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nextButton {
+  background: #00f0ff;
+  color: #010116;
+}
+
+.backButton {
+  background: rgba(0, 255, 255, 0.2);
+  color: #00f0ff;
+}
+
+.skipButton {
+  background: rgba(255, 0, 0, 0.2);
+  color: #ff0000;
+}
+
+/* === Welcome Complete === */
+.welcomeContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #010116;
+}
+
+.welcomeContent {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+  text-align: center;
+}
+
+.welcomeTitle {
+  color: #00f0ff;
+  margin-bottom: 1.5rem;
+}
+
+.welcomeText {
+  color: #fff;
+  margin-bottom: 2rem;
+}
+
+.startButton {
+  padding: 1rem 2rem;
+  background: #00f0ff;
+  border: none;
+  border-radius: 8px;
+  color: #010116;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* === Text Area === */
+.main-text {
+  margin-top: 24px;
+  font-size: 20px;
+  color: #ffffff;
+  text-align: center;
+  text-shadow: 0 0 6px #0ff, 0 0 12px #0ff;
+  z-index: 3;
+  transform: translateY(60px);
+}
+
+.brand-text {
+  color: #ff00cc;
+  text-shadow: 0 0 6px #ff00cc, 0 0 14px #ff00cc;
+  font-size: 24px;
+  font-weight: bold;
+  z-index: 3;
+  transform: translateY(60px);
+}
+
+/* === Dots Indicator === */
+.content-section {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  z-index: 3;
+}
+
+.section-item {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ff91da;
+  box-shadow: 0 0 6px #ff91da;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .splash-title {
+    font-size: 32px;
+  }
+
+  .splash-avatar {
+    max-height: 280px;
+  }
+
+  .avatar-glow {
+    width: 300px;
+    height: 300px;
+  }
+
+  .splash-logo {
+    width: 40px;
+    top: 16px;
+    right: 16px;
+  }
+
+  .main-text, .brand-text {
+    font-size: 18px;
+  }
+}
+
+/* Layer Resetting */
+.splash-container::before {
+  z-index: 0; /* background image */
+}
+
+/* Z-index structure update */
+.splash-container::before { z-index: 0; }        /* background */
+.effects-layer { z-index: 2; }                   /* starlight, fireflies, rising fx */
+.avatar-wrapper,
+.splash-logo,
+.main-text,
+.brand-text,
+.loading-orb { z-index: 3; }                     /* content */

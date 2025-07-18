@@ -1,0 +1,418 @@
+/* Loading Components Styles */
+
+/* Cyberpunk Spinner */
+.cyberpunkSpinner {
+  display: inline-block;
+  position: relative;
+}
+
+.cyberpunkSpinner.small {
+  width: 30px;
+  height: 30px;
+}
+
+.cyberpunkSpinner.medium {
+  width: 50px;
+  height: 50px;
+}
+
+.cyberpunkSpinner.large {
+  width: 80px;
+  height: 80px;
+}
+
+.spinnerRing {
+  position: absolute;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  animation: cyberpunkSpin 1s linear infinite;
+}
+
+.spinnerRing:nth-child(1) {
+  width: 100%;
+  height: 100%;
+  border-top-color: #00ffff;
+  animation-duration: 1s;
+}
+
+.spinnerRing:nth-child(2) {
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  border-right-color: #ff00ff;
+  animation-duration: 0.8s;
+  animation-direction: reverse;
+}
+
+.spinnerRing:nth-child(3) {
+  width: 60%;
+  height: 60%;
+  top: 20%;
+  left: 20%;
+  border-bottom-color: #ffff00;
+  animation-duration: 0.6s;
+}
+
+.spinnerText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #00ffff;
+  text-shadow: 0 0 10px currentColor;
+}
+
+@keyframes cyberpunkSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Color variations */
+.cyberpunkSpinner.primary .spinnerRing:nth-child(1) {
+  border-top-color: #3b82f6;
+}
+.cyberpunkSpinner.primary .spinnerRing:nth-child(2) {
+  border-right-color: #1d4ed8;
+}
+.cyberpunkSpinner.primary .spinnerRing:nth-child(3) {
+  border-bottom-color: #2563eb;
+}
+.cyberpunkSpinner.primary .spinnerText {
+  color: #3b82f6;
+}
+
+.cyberpunkSpinner.secondary .spinnerRing:nth-child(1) {
+  border-top-color: #6b7280;
+}
+.cyberpunkSpinner.secondary .spinnerRing:nth-child(2) {
+  border-right-color: #4b5563;
+}
+.cyberpunkSpinner.secondary .spinnerRing:nth-child(3) {
+  border-bottom-color: #374151;
+}
+.cyberpunkSpinner.secondary .spinnerText {
+  color: #6b7280;
+}
+
+.cyberpunkSpinner.success .spinnerRing:nth-child(1) {
+  border-top-color: #10b981;
+}
+.cyberpunkSpinner.success .spinnerRing:nth-child(2) {
+  border-right-color: #059669;
+}
+.cyberpunkSpinner.success .spinnerRing:nth-child(3) {
+  border-bottom-color: #047857;
+}
+.cyberpunkSpinner.success .spinnerText {
+  color: #10b981;
+}
+
+.cyberpunkSpinner.warning .spinnerRing:nth-child(1) {
+  border-top-color: #f59e0b;
+}
+.cyberpunkSpinner.warning .spinnerRing:nth-child(2) {
+  border-right-color: #d97706;
+}
+.cyberpunkSpinner.warning .spinnerRing:nth-child(3) {
+  border-bottom-color: #b45309;
+}
+.cyberpunkSpinner.warning .spinnerText {
+  color: #f59e0b;
+}
+
+.cyberpunkSpinner.error .spinnerRing:nth-child(1) {
+  border-top-color: #ef4444;
+}
+.cyberpunkSpinner.error .spinnerRing:nth-child(2) {
+  border-right-color: #dc2626;
+}
+.cyberpunkSpinner.error .spinnerRing:nth-child(3) {
+  border-bottom-color: #b91c1c;
+}
+.cyberpunkSpinner.error .spinnerText {
+  color: #ef4444;
+}
+
+/* Pulse Loader */
+.pulseLoader {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.pulseDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  animation: pulseAnimation 1.4s ease-in-out infinite both;
+}
+
+.pulseDot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+.pulseDot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+.pulseDot:nth-child(3) {
+  animation-delay: 0s;
+}
+
+@keyframes pulseAnimation {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Color variations for pulse loader */
+.pulseLoader.primary .pulseDot {
+  background-color: #3b82f6;
+}
+.pulseLoader.secondary .pulseDot {
+  background-color: #6b7280;
+}
+.pulseLoader.success .pulseDot {
+  background-color: #10b981;
+}
+.pulseLoader.warning .pulseDot {
+  background-color: #f59e0b;
+}
+.pulseLoader.error .pulseDot {
+  background-color: #ef4444;
+}
+
+/* Skeleton Loader */
+.skeletonLoader {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.skeletonItem {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+.skeletonItem.line {
+  height: 1rem;
+  width: 100%;
+}
+
+.skeletonItem.lineShort {
+  height: 1rem;
+  width: 60%;
+}
+
+.skeletonItem.circle {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+}
+
+.skeletonItem.rectangle {
+  height: 8rem;
+  width: 100%;
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Progress Spinner */
+.progressSpinner {
+  position: relative;
+  display: inline-block;
+}
+
+.progressSpinner.small {
+  width: 24px;
+  height: 24px;
+}
+.progressSpinner.medium {
+  width: 40px;
+  height: 40px;
+}
+.progressSpinner.large {
+  width: 60px;
+  height: 60px;
+}
+
+.progressCircle {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.progressBackground {
+  fill: none;
+  stroke: #e5e7eb;
+  stroke-width: 4;
+}
+
+.progressBar {
+  fill: none;
+  stroke: #3b82f6;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.3s ease;
+}
+
+.progressText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Glitch Effect Loader */
+.glitchLoader {
+  position: relative;
+  display: inline-block;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #00ffff;
+  text-transform: uppercase;
+  animation: glitchAnimation 1s infinite;
+}
+
+.glitchLoader::before,
+.glitchLoader::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitchLoader::before {
+  animation: glitchAnimation1 0.5s infinite;
+  color: #ff00ff;
+  z-index: -1;
+}
+
+.glitchLoader::after {
+  animation: glitchAnimation2 0.5s infinite;
+  color: #ffff00;
+  z-index: -2;
+}
+
+@keyframes glitchAnimation {
+  0%,
+  100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+}
+
+@keyframes glitchAnimation1 {
+  0%,
+  100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(2px, -2px);
+  }
+  40% {
+    transform: translate(-2px, 2px);
+  }
+  60% {
+    transform: translate(-2px, -2px);
+  }
+  80% {
+    transform: translate(2px, 2px);
+  }
+}
+
+@keyframes glitchAnimation2 {
+  0%,
+  100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, -2px);
+  }
+  40% {
+    transform: translate(2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(-2px, 2px);
+  }
+}
+
+/* Loading Screen */
+.loadingScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loadingContent {
+  text-align: center;
+  color: white;
+}
+
+.loadingTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.loadingSubtitle {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  opacity: 0.8;
+}
+
+.loadingSpinner {
+  margin-bottom: 1rem;
+}
