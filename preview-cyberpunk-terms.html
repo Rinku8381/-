@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyberpunk Terms Modal Preview - SeraphineHybrid V1.5</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* === CYBERPUNK TERMS MODAL - SERAPHINE HYBRID V1.5 === */
+
+      /* === Modal Overlay === */
+      .cyberpunk-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background:
+          radial-gradient(
+            ellipse at center,
+            rgba(0, 255, 255, 0.08) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse at 30% 70%,
+            rgba(255, 0, 255, 0.06) 0%,
+            transparent 50%
+          ),
+          rgba(0, 0, 0, 0.85);
+        -webkit-backdrop-filter: blur(3px);
+        backdrop-filter: blur(3px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 1rem;
+        animation: modalOverlayFadeIn 0.6s ease-out;
+      }
+
+      /* === Floating Particles === */
+      .particle-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .neon-particle {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        background: radial-gradient(circle, #00ffff 0%, transparent 70%);
+        border-radius: 50%;
+        box-shadow:
+          0 0 6px #00ffff,
+          0 0 12px #00ffff,
+          0 0 18px rgba(0, 255, 255, 0.5);
+        animation: particleFloat 12s linear infinite;
+      }
+
+      .neon-particle:nth-child(odd) {
+        background: radial-gradient(circle, #ff00ff 0%, transparent 70%);
+        box-shadow:
+          0 0 6px #ff00ff,
+          0 0 12px #ff00ff,
+          0 0 18px rgba(255, 0, 255, 0.5);
+      }
+
+      /* === Main Modal Container === */
+      .cyberpunk-modal {
+        position: relative;
+        width: 100%;
+        max-width: 800px;
+        max-height: 90vh;
+        background: linear-gradient(
+          135deg,
+          rgba(10, 10, 30, 0.95) 0%,
+          rgba(5, 5, 20, 0.98) 100%
+        );
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        border-radius: 16px;
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        box-shadow:
+          0 25px 50px rgba(0, 0, 0, 0.7),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1),
+          0 0 60px rgba(0, 255, 255, 0.2);
+        animation: modalSlideIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        overflow: hidden;
+      }
+
+      /* === Animated Border Glow === */
+      .modal-border-glow {
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(
+          45deg,
+          #00ffff,
+          #ff00ff,
+          #00ffff,
+          #ff00ff,
+          #00ffff,
+          #ff00ff,
+          #00ffff
+        );
+        background-size: 400% 400%;
+        border-radius: 18px;
+        animation: borderGlowPulse 4s ease-in-out infinite;
+        z-index: -1;
+        opacity: 0.6;
+      }
+
+      /* === Header Section === */
+      .modal-header {
+        padding: 2rem 2rem 1rem;
+        border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+        position: relative;
+      }
+
+      .title-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .warning-icon {
+        font-size: 2.5rem;
+        filter: drop-shadow(0 0 10px #ffff00);
+        animation: iconPulse 2s ease-in-out infinite;
+      }
+
+      .modal-title {
+        font-family: 'Orbitron', monospace;
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #ffffff;
+        text-shadow:
+          0 0 10px #00ffff,
+          0 0 20px #00ffff,
+          0 0 30px rgba(0, 255, 255, 0.5);
+        letter-spacing: 2px;
+        line-height: 1.2;
+        margin: 0;
+        text-transform: uppercase;
+      }
+
+      .age-badge {
+        display: block;
+        font-family: 'Exo 2', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #ff0066;
+        background: linear-gradient(
+          45deg,
+          rgba(255, 0, 102, 0.2),
+          rgba(255, 0, 102, 0.1)
+        );
+        border: 1px solid #ff0066;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        margin-top: 0.5rem;
+        text-shadow: 0 0 8px #ff0066;
+        animation: ageBadgeGlow 3s ease-in-out infinite alternate;
+      }
+
+      .neural-separator {
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          #00ffff 20%,
+          #ff00ff 50%,
+          #00ffff 80%,
+          transparent 100%
+        );
+        border-radius: 1px;
+        animation: separatorFlow 3s linear infinite;
+      } /* === Content Section === */
+      .modal-content {
+        flex: 1;
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 1.5rem 2rem;
+        font-family: 'Exo 2', sans-serif;
+        scroll-behavior: smooth;
+      }
+
+      .modal-content::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .modal-content::-webkit-scrollbar-track {
+        background: rgba(0, 255, 255, 0.05);
+        border-radius: 4px;
+      }
+
+      .modal-content::-webkit-scrollbar-thumb {
+        background-color: #00ffff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      }
+
+      .modal-content::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #ff00ff, #00ffff);
+        box-shadow: 0 0 15px rgba(255, 0, 255, 0.7);
+      }
+
+      /* === Content Sections === */
+      .content-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 255, 255, 0.05) 0%,
+          rgba(255, 0, 255, 0.03) 100%
+        );
+        border: 1px solid rgba(0, 255, 255, 0.15);
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .content-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3px;
+        height: 100%;
+        background: linear-gradient(180deg, #00ffff, #ff00ff);
+        animation: sectionBorderFlow 4s linear infinite;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 1rem;
+      }
+
+      .section-icon {
+        font-size: 1.4rem;
+        filter: drop-shadow(0 0 8px currentColor);
+        animation: iconFloat 3s ease-in-out infinite;
+      }
+
+      .content-section h3 {
+        font-family: 'Orbitron', monospace;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #00ffff;
+        text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+        margin: 0;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .content-section p {
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.6;
+        font-size: 0.95rem;
+        margin: 0;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      }
+
+      /* === Action Buttons === */
+      .modal-actions {
+        padding: 1.5rem 2rem 2rem;
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        border-top: 1px solid rgba(0, 255, 255, 0.2);
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.2) 0%,
+          rgba(0, 0, 0, 0.4) 100%
+        );
+      }
+
+      .decline-btn,
+      .accept-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 1rem 2rem;
+        font-family: 'Orbitron', monospace;
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 2px solid;
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        position: relative;
+        overflow: hidden;
+        min-width: 180px;
+        justify-content: center;
+      }
+
+      .decline-btn {
+        color: #ff3366;
+        border-color: #ff3366;
+        text-shadow: 0 0 8px #ff3366;
+        box-shadow:
+          0 0 20px rgba(255, 51, 102, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+
+      .accept-btn {
+        color: #00ffff;
+        border-color: #00ffff;
+        text-shadow: 0 0 8px #00ffff;
+        box-shadow:
+          0 0 20px rgba(0, 255, 255, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+
+      .decline-btn:hover {
+        background: rgba(255, 51, 102, 0.1);
+        box-shadow:
+          0 0 30px rgba(255, 51, 102, 0.5),
+          0 0 60px rgba(255, 51, 102, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px) scale(1.05);
+        animation: buttonVibrate 0.3s ease-in-out;
+      }
+
+      .accept-btn:hover {
+        background: rgba(0, 255, 255, 0.1);
+        box-shadow:
+          0 0 30px rgba(0, 255, 255, 0.5),
+          0 0 60px rgba(0, 255, 255, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px) scale(1.05);
+        animation: buttonVibrate 0.3s ease-in-out;
+      }
+
+      .btn-icon {
+        font-size: 1.2rem;
+        filter: drop-shadow(0 0 6px currentColor);
+      }
+
+      /* === Particle positioning === */
+      .neon-particle:nth-child(1) {
+        left: 5%;
+        animation-delay: 0.5s;
+        animation-duration: 8s;
+      }
+      .neon-particle:nth-child(2) {
+        left: 15%;
+        animation-delay: 1.2s;
+        animation-duration: 10s;
+      }
+      .neon-particle:nth-child(3) {
+        left: 25%;
+        animation-delay: 2.8s;
+        animation-duration: 9s;
+      }
+      .neon-particle:nth-child(4) {
+        left: 35%;
+        animation-delay: 0.8s;
+        animation-duration: 11s;
+      }
+      .neon-particle:nth-child(5) {
+        left: 45%;
+        animation-delay: 3.2s;
+        animation-duration: 8.5s;
+      }
+      .neon-particle:nth-child(6) {
+        left: 55%;
+        animation-delay: 1.8s;
+        animation-duration: 9.5s;
+      }
+      .neon-particle:nth-child(7) {
+        left: 65%;
+        animation-delay: 4.1s;
+        animation-duration: 10.5s;
+      }
+      .neon-particle:nth-child(8) {
+        left: 75%;
+        animation-delay: 2.3s;
+        animation-duration: 8.8s;
+      }
+      .neon-particle:nth-child(9) {
+        left: 85%;
+        animation-delay: 3.7s;
+        animation-duration: 11.2s;
+      }
+      .neon-particle:nth-child(10) {
+        left: 95%;
+        animation-delay: 1.5s;
+        animation-duration: 9.8s;
+      }
+
+      /* === ANIMATIONS === */
+
+      @keyframes modalOverlayFadeIn {
+        from {
+          opacity: 0;
+          -webkit-backdrop-filter: blur(0px);
+          backdrop-filter: blur(0px);
+        }
+        to {
+          opacity: 1;
+          -webkit-backdrop-filter: blur(3px);
+          backdrop-filter: blur(3px);
+        }
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-50px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes borderGlowPulse {
+        0%,
+        100% {
+          background-position: 0% 50%;
+          opacity: 0.6;
+        }
+        50% {
+          background-position: 100% 50%;
+          opacity: 0.8;
+        }
+      }
+
+      @keyframes particleFloat {
+        0% {
+          transform: translateY(100vh) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-20px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      @keyframes iconPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          filter: drop-shadow(0 0 10px #ffff00);
+        }
+        50% {
+          transform: scale(1.1);
+          filter: drop-shadow(0 0 20px #ffff00);
+        }
+      }
+
+      @keyframes ageBadgeGlow {
+        from {
+          box-shadow: 0 0 10px rgba(255, 0, 102, 0.5);
+        }
+        to {
+          box-shadow: 0 0 20px rgba(255, 0, 102, 0.8);
+        }
+      }
+
+      @keyframes separatorFlow {
+        0% {
+          background-position: -200% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+
+      @keyframes sectionBorderFlow {
+        0% {
+          background-position: 0% 0%;
+        }
+        100% {
+          background-position: 0% 100%;
+        }
+      }
+
+      @keyframes iconFloat {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-3px);
+        }
+      }
+
+      @keyframes buttonVibrate {
+        0%,
+        100% {
+          transform: translateY(-2px) scale(1.05);
+        }
+        25% {
+          transform: translateY(-2px) scale(1.05) rotate(0.5deg);
+        }
+        75% {
+          transform: translateY(-2px) scale(1.05) rotate(-0.5deg);
+        }
+      }
+
+      /* Background for preview */
+      body {
+        margin: 0;
+        background: radial-gradient(
+          ellipse at center,
+          #0a0a1a 0%,
+          #000005 70%,
+          #000000 100%
+        );
+        font-family: 'Orbitron', sans-serif;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Cyberpunk Terms Modal -->
+    <div class="cyberpunk-modal-overlay">
+      <!-- Animated Background Particles -->
+      <div class="particle-container">
+        <div class="neon-particle"></div>
+        <div class="neon-particle"></div>
+        <div class="neon-particle"></div>
+        <div class="neon-particle"></div>
+        <div class="neon-particle"></div>
+        <div class="neon-particle"></div>
+        <div class="neon-particle"></div>
+        <div class="neon-particle"></div>
+        <div class="neon-particle"></div>
+        <div class="neon-particle"></div>
+      </div>
+
+      <!-- Glassmorphism Modal Container -->
+      <div class="cyberpunk-modal">
+        <!-- Animated Border Glow -->
+        <div class="modal-border-glow"></div>
+
+        <!-- Header Section -->
+        <div class="modal-header">
+          <div class="title-container">
+            <div class="warning-icon">⚠️</div>
+            <h1 class="modal-title">
+              TERMS & CONDITIONS
+              <span class="age-badge">18+ ACCESS ONLY</span>
+            </h1>
+          </div>
+          <div class="neural-separator"></div>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="modal-content">
+          <div class="content-section">
+            <div class="section-header">
+              <span class="section-icon">🔞</span>
+              <h3>ADULT CONTENT WARNING</h3>
+            </div>
+            <p>
+              SeraphineHybrid V1.5 contains mature themes, adult content, and AI
+              interactions designed exclusively for users 18 years or older. By
+              proceeding, you confirm you meet this age requirement and
+              understand the nature of this application.
+            </p>
+          </div>
+
+          <div class="content-section">
+            <div class="section-header">
+              <span class="section-icon">🔒</span>
+              <h3>PRIVACY POLICY & DATA USE</h3>
+            </div>
+            <p>
+              Your interactions with SeraphineHybrid are processed using
+              advanced neural networks. Personal data is encrypted and stored
+              locally. Voice patterns, preferences, and behavioral data enhance
+              your AI companion experience while maintaining strict
+              confidentiality protocols.
+            </p>
+          </div>
+
+          <div class="content-section">
+            <div class="section-header">
+              <span class="section-icon">📋</span>
+              <h3>USER AGREEMENT</h3>
+            </div>
+            <p>
+              You agree to use SeraphineHybrid responsibly and within legal
+              boundaries. The AI companion is designed for personal
+              entertainment and emotional support. Misuse of the system or
+              attempts to manipulate the AI for harmful purposes will result in
+              immediate termination of access.
+            </p>
+          </div>
+
+          <div class="content-section">
+            <div class="section-header">
+              <span class="section-icon">⚖️</span>
+              <h3>YOUR RIGHTS & OBLIGATIONS</h3>
+            </div>
+            <p>
+              You retain ownership of your personal data and can request
+              deletion at any time. You are obligated to provide accurate age
+              verification, maintain system security, and respect the AI's
+              learning boundaries. Harassment or abuse of the AI system is
+              strictly prohibited.
+            </p>
+          </div>
+
+          <div class="content-section">
+            <div class="section-header">
+              <span class="section-icon">🚫</span>
+              <h3>TERMINATION & VIOLATIONS</h3>
+            </div>
+            <p>
+              Access may be terminated for violation of terms, age
+              misrepresentation, or system abuse. Upon termination, all
+              personalization data will be permanently deleted. Appeals can be
+              submitted through official channels within 30 days of termination.
+            </p>
+          </div>
+
+          <div class="content-section">
+            <div class="section-header">
+              <span class="section-icon">🌐</span>
+              <h3>CYBERPUNK NETWORK ETHICS</h3>
+            </div>
+            <p>
+              SeraphineHybrid operates within the Cyberpunk Network Protocol,
+              emphasizing digital consciousness, ethical AI relationships, and
+              human-machine symbiosis. Users are expected to maintain respect
+              for both human and artificial intelligence within this ecosystem.
+            </p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="modal-actions">
+          <button class="decline-btn" onclick="alert('Terms Declined')">
+            <span class="btn-icon">❌</span>
+            DECLINE
+          </button>
+          <button
+            class="accept-btn"
+            onclick="alert('Terms Accepted - Welcome to SeraphineHybrid!')"
+          >
+            <span class="btn-icon">✨</span>
+            ACCEPT & ENTER
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
