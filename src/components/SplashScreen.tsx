@@ -1,4 +1,3 @@
-// SplashScreen.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '@/styles/splash.module.css';
@@ -8,22 +7,31 @@ export default function SplashScreen(): JSX.Element {
   const audioRef = useRef<HTMLAudioElement>(null);
   const fireflyContainerRef = useRef<HTMLDivElement>(null);
   const dustContainerRef = useRef<HTMLDivElement>(null);
+  const risingParticlesRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const [isLoaded, setIsLoaded] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
+  const [showAvatar, setShowAvatar] = useState(false);
+  const [typingSequence, setTypingSequence] = useState({
+    currentLine: 0,
+    currentText: '',
+    showCursor: true,
+    isComplete: false,
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoaded(true);
-      setTimeout(() => setShowContent(true), 500);
+      setTimeout(() => {
+        setShowContent(true);
+        setTimeout(() => setShowAvatar(true), 1500); // delay avatar after portal
+      }, 800);
     }, 800);
-
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    // Set up firefly positions and animations
     if (fireflyContainerRef.current) {
       const fireflies = fireflyContainerRef.current.querySelectorAll(
         `.${styles.firefly}`
@@ -40,8 +48,6 @@ export default function SplashScreen(): JSX.Element {
         (firefly as HTMLElement).style.animationDuration = `${duration}s`;
       });
     }
-
-    // Set up dust particle positions and animations
     if (dustContainerRef.current) {
       const dustParticles = dustContainerRef.current.querySelectorAll(
         `.${styles.dustParticle}`
@@ -56,9 +62,90 @@ export default function SplashScreen(): JSX.Element {
         (particle as HTMLElement).style.animationDuration = `${duration}s`;
       });
     }
+
+    // Initialize rising particles
+    if (risingParticlesRef.current) {
+      const risingParticles = risingParticlesRef.current.querySelectorAll(
+        `.${styles.neonParticle}`
+      );
+      risingParticles.forEach(particle => {
+        const left = Math.random() * 100;
+        const delay = Math.random() * 10;
+        const duration = 8 + Math.random() * 6;
+
+        (particle as HTMLElement).style.left = `${left}%`;
+        (particle as HTMLElement).style.animationDelay = `${delay}s`;
+        (particle as HTMLElement).style.animationDuration = `${duration}s`;
+      });
+    }
   }, [showContent]);
 
-  // Generate firefly data
+  // Typing sequence effect
+  useEffect(() => {
+    if (!showContent) return;
+
+    const typingTexts = [
+      'Initializing neural core...',
+      'Authenticating user...',
+      'Welcome, Master.',
+    ];
+
+    let currentLineIndex = 0;
+    let currentCharIndex = 0;
+    let typingTimer: NodeJS.Timeout;
+
+    const typeNextChar = () => {
+      if (currentLineIndex >= typingTexts.length) {
+        setTypingSequence(prev => ({ ...prev, isComplete: true }));
+        return;
+      }
+
+      const currentFullText = typingTexts[currentLineIndex];
+
+      if (currentFullText && currentCharIndex <= currentFullText.length) {
+        setTypingSequence(prev => ({
+          ...prev,
+          currentLine: currentLineIndex,
+          currentText: currentFullText.substring(0, currentCharIndex),
+        }));
+        currentCharIndex++;
+        typingTimer = setTimeout(typeNextChar, 80);
+      } else {
+        // Line complete, pause then move to next
+        setTimeout(() => {
+          currentLineIndex++;
+          currentCharIndex = 0;
+          if (currentLineIndex < typingTexts.length) {
+            typingTimer = setTimeout(typeNextChar, 500);
+          } else {
+            setTypingSequence(prev => ({ ...prev, isComplete: true }));
+          }
+        }, 1200);
+      }
+    };
+
+    // Start typing after a delay
+    const startDelay = setTimeout(() => {
+      typeNextChar();
+    }, 1000);
+
+    return () => {
+      clearTimeout(typingTimer);
+      clearTimeout(startDelay);
+    };
+  }, [showContent]);
+
+  // Cursor blinking effect
+  useEffect(() => {
+    if (typingSequence.isComplete) return;
+
+    const cursorTimer = setInterval(() => {
+      setTypingSequence(prev => ({ ...prev, showCursor: !prev.showCursor }));
+    }, 530);
+
+    return () => clearInterval(cursorTimer);
+  }, [typingSequence.isComplete]);
+
   const generateFireflies = () => {
     const colors = ['Cyan', 'Magenta', 'Violet', 'Blue'];
     const sizes = ['Tiny', 'Small', 'Medium'];
@@ -67,12 +154,7 @@ export default function SplashScreen(): JSX.Element {
     for (let i = 0; i < 25; i++) {
       const color = colors[Math.floor(Math.random() * colors.length)];
       const size = sizes[Math.floor(Math.random() * sizes.length)];
-
-      fireflies.push({
-        id: i,
-        color,
-        size,
-      });
+      fireflies.push({ id: i, color, size });
     }
     return fireflies;
   };
@@ -99,14 +181,22 @@ export default function SplashScreen(): JSX.Element {
         />
       </audio>
 
-      {/* Animated Background Layer */}
       <div className={styles.animatedBackground}>
         <div className={styles.crackedGlass}></div>
         <div className={styles.dynamicGlow}></div>
         <div className={styles.layeredGlow}></div>
       </div>
 
-      {/* Firefly Particle System */}
+      {/* Rising Neon Particles */}
+      <div ref={risingParticlesRef} className={styles.risingParticles}>
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className={`${styles.neonParticle} ${styles[`particle${(i % 4) + 1}`]}`}
+          />
+        ))}
+      </div>
+
       <div ref={fireflyContainerRef} className={styles.fireflyContainer}>
         {fireflies.map(firefly => (
           <div
@@ -116,7 +206,6 @@ export default function SplashScreen(): JSX.Element {
         ))}
       </div>
 
-      {/* Rising Dust Particles */}
       <div ref={dustContainerRef} className={styles.dustParticles}>
         {[...Array(15)].map((_, i) => (
           <div key={i} className={styles.dustParticle} />
@@ -125,38 +214,55 @@ export default function SplashScreen(): JSX.Element {
 
       {!showTerms && isLoaded && showContent && (
         <div className={styles.splashContainer}>
-          {/* Central Avatar with Glowing Frame */}
+          {/* Typing Intro Text Sequence */}
+          {!typingSequence.isComplete && (
+            <div className={styles.typingIntro}>
+              <span className={styles.typingText}>
+                {typingSequence.currentText}
+                {typingSequence.showCursor && (
+                  <span className={styles.cursor}>|</span>
+                )}
+              </span>
+            </div>
+          )}
+
           <div className={styles.avatarWrapper}>
             <div className={styles.avatarGlowRing}></div>
             <div className={styles.avatarPulseRing}></div>
-            <img
-              src='/assets/splash/SeraphineAvatar.png'
-              alt='Seraphine Avatar'
-              className={styles.avatarImage}
-            />
+            <div className={styles.avatarPortal}>
+              <div className={styles.portalRing1}></div>
+              <div className={styles.portalRing2}></div>
+              <div className={styles.portalRing3}></div>
+              <div className={styles.portalCenter}></div>
+            </div>
+            {showAvatar && (
+              <img
+                src='/assets/splash/SeraphineAvatar.gif'
+                alt='Seraphine Avatar'
+                className={styles.avatarImage}
+              />
+            )}
           </div>
 
-          {/* Cyberpunk Title with Glitch Effect */}
           <div className={styles.titleContainer}>
             <h1
-              className={`${styles.splashTitle} ${isLoaded ? styles.loaded : ''}`}
+              className={`${styles.splashTitle} ${isLoaded ? styles.loaded : ''} ${styles.holoSwipe}`}
             >
-              <span className={styles.titleLine1}>Seraphine</span>
-              <span className={styles.titleLine2}>Hybrid</span>
+              <span className={styles.titleLine1}>Seraphine Hybrid</span>
+              <span className={styles.titleLine2}>V1.5</span>
             </h1>
             <div className={styles.titleGlitch}>
-              <span className={styles.titleLine1}>Seraphine</span>
-              <span className={styles.titleLine2}>Hybrid</span>
+              <span className={styles.titleLine1}>Seraphine Hybrid</span>
+              <span className={styles.titleLine2}>V1.5</span>
             </div>
           </div>
 
           <p
-            className={`${styles.splashSubtitle} ${isLoaded ? styles.loaded : ''}`}
+            className={`${styles.splashSubtitle} ${isLoaded ? styles.loaded : ''} ${styles.holoSwipe}`}
           >
-            Welcome to the future of smart home automation
+            Your Home. Your House. Your Seraphine.
           </p>
 
-          {/* Enhanced Start Button */}
           <div className={styles.buttonContainer}>
             <button
               className={`${styles.startButton} ${isLoaded ? styles.loaded : ''}`}
@@ -169,6 +275,17 @@ export default function SplashScreen(): JSX.Element {
               <div className={styles.buttonGlow}></div>
               <div className={styles.buttonRipple}></div>
             </button>
+
+            {/* Loading Plasma Orb */}
+            <div className={styles.plasmaOrbContainer}>
+              <div className={styles.plasmaOrb}>
+                <div className={styles.orbCore}></div>
+                <div className={styles.orbRing1}></div>
+                <div className={styles.orbRing2}></div>
+                <div className={styles.orbRing3}></div>
+                <div className={styles.orbGlow}></div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -183,4 +300,4 @@ export default function SplashScreen(): JSX.Element {
     </main>
   );
 }
-// SplashScreen.tsx
+

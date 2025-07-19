@@ -1,5 +1,164 @@
 /* === CYBERPUNK SPLASH SCREEN - SERAPHINE HYBRID V1.5 === */
 
+/* === TYPING INTRO TEXT SEQUENCE === */
+.typingIntro {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.typingText {
+  font-family:
+    'Courier New', 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 1.1rem;
+  color: #00ffff;
+  text-shadow:
+    0 0 10px #00ffff,
+    0 0 20px #00ffff,
+    0 0 30px #00ffff;
+  letter-spacing: 0.1rem;
+  white-space: nowrap;
+}
+
+.cursor {
+  display: inline-block;
+  color: #ff00ff;
+  text-shadow:
+    0 0 5px #ff00ff,
+    0 0 10px #ff00ff;
+  animation: cursorBlink 1.06s infinite;
+  margin-left: 2px;
+}
+
+/* === LOADING PLASMA ORB === */
+.plasmaOrbContainer {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  height: 80px;
+}
+
+.plasmaOrb {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orbCore {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, #ffffff 0%, #00ffff 40%, #ff00ff 100%);
+  border-radius: 50%;
+  animation: orbCorePulse 2s ease-in-out infinite;
+  z-index: 3;
+}
+
+.orbRing1,
+.orbRing2,
+.orbRing3 {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid transparent;
+}
+
+.orbRing1 {
+  width: 40px;
+  height: 40px;
+  border-color: rgba(0, 255, 255, 0.6);
+  animation: orbRingRotate 3s linear infinite;
+  z-index: 2;
+}
+
+.orbRing2 {
+  width: 50px;
+  height: 50px;
+  border-color: rgba(255, 0, 255, 0.4);
+  animation: orbRingRotate 2.5s linear infinite reverse;
+  z-index: 1;
+}
+
+.orbRing3 {
+  width: 60px;
+  height: 60px;
+  border-color: rgba(138, 43, 226, 0.3);
+  animation: orbRingRotate 4s linear infinite;
+  z-index: 0;
+}
+
+.orbGlow {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(
+    circle,
+    rgba(0, 255, 255, 0.1) 0%,
+    rgba(255, 0, 255, 0.05) 50%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  animation: orbGlowPulse 2.5s ease-in-out infinite alternate;
+  z-index: -1;
+}
+
+/* === RISING NEON PARTICLES === */
+.risingParticles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.neonParticle {
+  position: absolute;
+  bottom: -10px;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  filter: blur(0.5px);
+  animation: particleRise 12s linear infinite;
+}
+
+.particle1 {
+  background: #00ffff;
+  box-shadow:
+    0 0 6px #00ffff,
+    0 0 12px #00ffff;
+}
+
+.particle2 {
+  background: #ff00ff;
+  box-shadow:
+    0 0 6px #ff00ff,
+    0 0 12px #ff00ff;
+}
+
+.particle3 {
+  background: #8a2be2;
+  box-shadow:
+    0 0 6px #8a2be2,
+    0 0 12px #8a2be2;
+}
+
+.particle4 {
+  background: #0099ff;
+  box-shadow:
+    0 0 6px #0099ff,
+    0 0 12px #0099ff;
+}
+
 /* === Base Container === */
 .splashMain {
   min-height: 100vh;
@@ -189,8 +348,8 @@
 /* === AVATAR SECTION === */
 .avatarWrapper {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 320px;
+  height: 320px;
   margin: 0 auto 3rem auto;
   display: flex;
   align-items: center;
@@ -239,18 +398,94 @@
   z-index: 0;
 }
 
+.avatarPortal {
+  width: 300px;
+  height: 300px;
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  transform: scale(1.2);
+  animation: portalEntrance 1.2s ease-out forwards;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portalRing1,
+.portalRing2,
+.portalRing3 {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: linear-gradient(45deg, #00ffff, #ff00ff, #8a2be2, #0099ff)
+    border-box;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: subtract;
+  mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: subtract;
+}
+
+.portalRing1 {
+  width: 280px;
+  height: 280px;
+  animation: portalRingRotate 3s linear infinite;
+  border-width: 3px;
+  opacity: 0.8;
+}
+
+.portalRing2 {
+  width: 200px;
+  height: 200px;
+  animation: portalRingRotate 2s linear infinite reverse;
+  border-width: 2px;
+  opacity: 0.6;
+}
+
+.portalRing3 {
+  width: 120px;
+  height: 120px;
+  animation: portalRingRotate 4s linear infinite;
+  border-width: 1px;
+  opacity: 0.4;
+}
+
+.portalCenter {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 255, 255, 0.8) 0%,
+    rgba(255, 0, 255, 0.6) 30%,
+    rgba(138, 43, 226, 0.4) 60%,
+    transparent 100%
+  );
+  animation: portalCenterPulse 2s ease-in-out infinite alternate;
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.5),
+    0 0 40px rgba(255, 0, 255, 0.3),
+    inset 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
 .avatarImage {
+  width: 300px;
+  height: 300px;
+  z-index: 2;
   position: relative;
-  width: 160px;
-  height: 160px;
+  pointer-events: none;
+  transform-origin: center;
+  animation: syncPulse 4s ease-in-out infinite;
   border-radius: 50%;
   object-fit: cover;
-  z-index: 3;
   box-shadow:
     0 0 30px rgba(0, 255, 255, 0.3),
     0 0 60px rgba(255, 0, 255, 0.2),
     inset 0 0 20px rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
 }
 
 /* === TITLE SECTION === */
@@ -333,6 +568,20 @@
 .splashSubtitle.loaded {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* === TEXT EFFECTS === */
+.holoSwipe {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 255, 255, 0.3),
+    rgba(255, 0, 255, 0.3)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  animation: swipeReveal 2.5s ease-in-out forwards;
 }
 
 /* === ENHANCED START BUTTON === */
@@ -590,6 +839,67 @@
   }
 }
 
+@keyframes swipeReveal {
+  0% {
+    transform: translateX(-60%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* === AVATAR PORTAL EFFECT === */
+@keyframes portalEntrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(0deg);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.3) rotate(180deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.2) rotate(360deg);
+  }
+}
+
+/* === SYNC PULSE === */
+@keyframes syncPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes portalRingRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes portalCenterPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
 /* === RESPONSIVE DESIGN === */
 @media (max-width: 768px) {
   .splashTitle {
@@ -598,14 +908,39 @@
   }
 
   .avatarWrapper {
-    width: 150px;
-    height: 150px;
+    width: 220px;
+    height: 220px;
     margin-bottom: 2rem;
   }
 
   .avatarImage {
-    width: 120px;
-    height: 120px;
+    width: 200px;
+    height: 200px;
+  }
+
+  .avatarPortal {
+    width: 220px;
+    height: 220px;
+  }
+
+  .portalRing1 {
+    width: 200px;
+    height: 200px;
+  }
+
+  .portalRing2 {
+    width: 140px;
+    height: 140px;
+  }
+
+  .portalRing3 {
+    width: 80px;
+    height: 80px;
+  }
+
+  .portalCenter {
+    width: 40px;
+    height: 40px;
   }
 
   .splashSubtitle {
@@ -617,6 +952,46 @@
     padding: 0.8rem 2rem;
     font-size: 1rem;
   }
+
+  .typingIntro {
+    top: 12%;
+  }
+
+  .typingText {
+    font-size: 0.9rem;
+  }
+
+  .plasmaOrbContainer {
+    margin-top: 1.5rem;
+    height: 60px;
+  }
+
+  .plasmaOrb {
+    width: 45px;
+    height: 45px;
+  }
+
+  .orbCore {
+    width: 15px;
+    height: 15px;
+  }
+
+  .orbRing1 {
+    width: 30px;
+    height: 30px;
+  }
+  .orbRing2 {
+    width: 38px;
+    height: 38px;
+  }
+  .orbRing3 {
+    width: 45px;
+    height: 45px;
+  }
+  .orbGlow {
+    width: 60px;
+    height: 60px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -625,17 +1000,83 @@
   }
 
   .avatarWrapper {
-    width: 120px;
-    height: 120px;
+    width: 170px;
+    height: 170px;
   }
 
   .avatarImage {
+    width: 150px;
+    height: 150px;
+  }
+
+  .avatarPortal {
+    width: 170px;
+    height: 170px;
+  }
+
+  .portalRing1 {
+    width: 150px;
+    height: 150px;
+  }
+
+  .portalRing2 {
     width: 100px;
     height: 100px;
   }
 
+  .portalRing3 {
+    width: 60px;
+    height: 60px;
+  }
+
+  .portalCenter {
+    width: 30px;
+    height: 30px;
+  }
+
   .splashContainer {
     padding: 1rem;
+  }
+
+  .typingIntro {
+    top: 10%;
+  }
+
+  .typingText {
+    font-size: 0.8rem;
+    letter-spacing: 0.05rem;
+  }
+
+  .plasmaOrbContainer {
+    margin-top: 1rem;
+    height: 50px;
+  }
+
+  .plasmaOrb {
+    width: 35px;
+    height: 35px;
+  }
+
+  .orbCore {
+    width: 12px;
+    height: 12px;
+  }
+
+  .orbRing1 {
+    width: 24px;
+    height: 24px;
+  }
+  .orbRing2 {
+    width: 30px;
+    height: 30px;
+  }
+  .orbRing3 {
+    width: 35px;
+    height: 35px;
+  }
+  .orbGlow {
+    width: 45px;
+    height: 45px;
   }
 }
 
@@ -731,5 +1172,156 @@
 .declineButton:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 20px rgba(255, 0, 64, 0.4);
+}
+
+/* === NEW ANIMATIONS === */
+
+/* Cursor Blinking */
+@keyframes cursorBlink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Plasma Orb Animations */
+@keyframes orbCorePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+}
+
+@keyframes orbRingRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbGlowPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 0.6;
+  }
+}
+
+/* Rising Neon Particles */
+@keyframes particleRise {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(30px);
+    opacity: 0;
+  }
+}
+
+/* === RESPONSIVE UPDATES === */
+@media (max-width: 768px) {
+  .typingIntro {
+    top: 12%;
+  }
+
+  .typingText {
+    font-size: 0.9rem;
+  }
+
+  .plasmaOrbContainer {
+    margin-top: 1.5rem;
+    height: 60px;
+  }
+
+  .plasmaOrb {
+    width: 45px;
+    height: 45px;
+  }
+
+  .orbCore {
+    width: 15px;
+    height: 15px;
+  }
+
+  .orbRing1 {
+    width: 30px;
+    height: 30px;
+  }
+  .orbRing2 {
+    width: 38px;
+    height: 38px;
+  }
+  .orbRing3 {
+    width: 45px;
+    height: 45px;
+  }
+  .orbGlow {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .typingIntro {
+    top: 10%;
+  }
+
+  .typingText {
+    font-size: 0.8rem;
+    letter-spacing: 0.05rem;
+  }
+
+  .plasmaOrbContainer {
+    margin-top: 1rem;
+    height: 50px;
+  }
+
+  .plasmaOrb {
+    width: 35px;
+    height: 35px;
+  }
+
+  .orbCore {
+    width: 12px;
+    height: 12px;
+  }
+
+  .orbRing1 {
+    width: 24px;
+    height: 24px;
+  }
+  .orbRing2 {
+    width: 30px;
+    height: 30px;
+  }
+  .orbRing3 {
+    width: 35px;
+    height: 35px;
+  }
+  .orbGlow {
+    width: 45px;
+    height: 45px;
+  }
 }
 
