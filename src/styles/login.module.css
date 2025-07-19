@@ -1,60 +1,640 @@
-/* === Splash Container === */
-.splash-container {
-  display: grid;
-  place-items: center;
-  height: 100vh;
+/* === CYBERPUNK LOGIN MODAL - SERAPHINE HYBRID V1.5 === */
+
+/* === Modal Overlay === */
+.loginOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  background: #010116;
-  overflow: hidden;
-  position: relative;
-  z-index: 0;
-  font-family: 'Orbitron', sans-serif;
-  padding-top: 60px;
-  box-sizing: border-box;
-}
-
-.inputWrapper {
-  position: relative;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   display: flex;
+  justify-content: center;
   align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  font-family: 'Orbitron', 'Arial', sans-serif;
 }
 
-.inputIcon {
-  position: absolute;
-  left: 12px;
-  width: 20px;
-  height: 20px;
-  opacity: 0.7;
+.visible {
+  opacity: 1;
+}
+
+.hidden {
+  opacity: 0;
   pointer-events: none;
 }
 
-.formInput {
-  padding-left: 40px; /* space untuk icon di kiri */
+/* === Background Particles === */
+.backgroundParticles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-.starlight-overlay {
+.loginParticle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  filter: blur(0.5px);
+  animation: loginParticleFloat 15s linear infinite;
+}
+
+.loginParticle1 {
+  background: #00ffff;
+  box-shadow: 0 0 8px #00ffff;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.loginParticle2 {
+  background: #ff00ff;
+  box-shadow: 0 0 8px #ff00ff;
+  left: 50%;
+  animation-delay: 5s;
+}
+
+.loginParticle3 {
+  background: #8a2be2;
+  box-shadow: 0 0 8px #8a2be2;
+  left: 80%;
+  animation-delay: 10s;
+}
+
+/* === Main Modal Container === */
+.loginModal {
+  background: linear-gradient(
+    135deg,
+    rgba(10, 10, 26, 0.95) 0%,
+    rgba(0, 0, 5, 0.98) 100%
+  );
+  border: 2px solid transparent;
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  max-width: 450px;
+  width: 90%;
+  position: relative;
+  box-shadow:
+    0 0 50px rgba(0, 255, 255, 0.3),
+    0 0 100px rgba(255, 0, 255, 0.2),
+    inset 0 0 30px rgba(255, 255, 255, 0.05);
+  transform: scale(0.8) translateY(50px);
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+}
+
+.modalVisible {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.loginModal::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #00ffff, #ff00ff, #8a2be2, #0099ff);
+  border-radius: 20px;
+  z-index: -1;
+  animation: modalBorderGlow 3s linear infinite;
+}
+
+.loginModal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 10, 26, 0.95) 0%,
+    rgba(0, 0, 5, 0.98) 100%
+  );
+  border-radius: 18px;
+  z-index: -1;
+}
+
+/* === Modal Header === */
+.modalHeader {
+  position: relative;
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.loginTitle {
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: 0.2rem;
+  margin: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.titlePrimary {
+  display: block;
+  background: linear-gradient(45deg, #00ffff 0%, #0099ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+  animation: titlePrimaryGlow 2s ease-in-out infinite alternate;
+  margin-bottom: 0.3rem;
+}
+
+.titleSecondary {
+  display: block;
+  background: linear-gradient(45deg, #ff00ff 0%, #8a2be2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+  animation: titleSecondaryGlow 2s ease-in-out infinite alternate-reverse;
+  font-size: 0.9em;
+}
+
+.titleGlitch {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: 1;
-  pointer-events: none;
-  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 70%),
-              radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.04) 0%, transparent 80%),
-              radial-gradient(circle at 50% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 90%);
-  animation: starlightPulse 6s ease-in-out infinite alternate;
-  mix-blend-mode: screen;
+  opacity: 0;
+  animation: titleGlitchEffect 6s infinite;
 }
 
-@keyframes starlightPulse {
+.titleGlitch .titlePrimary,
+.titleGlitch .titleSecondary {
+  color: #ff0040;
+  text-shadow:
+    2px 0 #00ffff,
+    -2px 0 #ff00ff;
+}
+
+/* === Login Form === */
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputLabel {
+  color: rgba(0, 255, 255, 0.8);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.loginInput {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(0, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: 'Courier New', monospace;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+  outline: none;
+}
+
+.loginInput::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+}
+
+.loginInput:focus {
+  border-color: #00ffff;
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.4),
+    inset 0 0 20px rgba(0, 0, 0, 0.5);
+  animation: inputFlicker 0.1s ease-in-out 3;
+}
+
+.inputGlow {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  border-radius: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  filter: blur(4px);
+}
+
+.loginInput:focus + .inputGlow {
+  opacity: 0.3;
+  animation: inputGlowPulse 2s ease-in-out infinite;
+}
+
+/* === Buttons === */
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.loginButton {
+  background: linear-gradient(
+    45deg,
+    rgba(0, 255, 255, 0.2),
+    rgba(0, 153, 255, 0.2)
+  );
+  border: 2px solid #00ffff;
+  border-radius: 50px;
+  padding: 1rem 2rem;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.cancelButton {
+  background: linear-gradient(
+    45deg,
+    rgba(255, 0, 64, 0.2),
+    rgba(255, 0, 128, 0.2)
+  );
+  border: 2px solid #ff0040;
+  border-radius: 50px;
+  padding: 0.8rem 2rem;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.buttonText {
+  position: relative;
+  z-index: 2;
+}
+
+.buttonGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(
+    circle,
+    rgba(0, 255, 255, 0.6) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.buttonRipple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
+.loginButton:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 8px 30px rgba(0, 255, 255, 0.4),
+    0 0 50px rgba(0, 255, 255, 0.3);
+  border-color: #ffffff;
+}
+
+.loginButton:hover .buttonGlow {
+  width: 200%;
+  height: 200%;
+}
+
+.loginButton:active .buttonRipple {
+  width: 300%;
+  height: 300%;
+  opacity: 0;
+  transition: all 0.6s ease;
+}
+
+.cancelButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(255, 0, 64, 0.4);
+  border-color: #ff0080;
+}
+
+/* === Loading Container === */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.loadingOrb {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orbCore {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, #ffffff 0%, #00ffff 40%, #ff00ff 100%);
+  border-radius: 50%;
+  animation: loadingOrbPulse 1.5s ease-in-out infinite;
+  z-index: 3;
+}
+
+.orbRing1,
+.orbRing2 {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+.orbRing1 {
+  width: 60px;
+  height: 60px;
+  border-color: rgba(0, 255, 255, 0.6);
+  animation: loadingOrbRotate 2s linear infinite;
+  z-index: 2;
+}
+
+.orbRing2 {
+  width: 80px;
+  height: 80px;
+  border-color: rgba(255, 0, 255, 0.4);
+  animation: loadingOrbRotate 3s linear infinite reverse;
+  z-index: 1;
+}
+
+.loadingText {
+  text-align: center;
+}
+
+.loadingLine {
+  font-family: 'Courier New', 'SF Mono', monospace;
+  font-size: 1.1rem;
+  color: #00ffff;
+  text-shadow:
+    0 0 10px #00ffff,
+    0 0 20px #00ffff;
+  letter-spacing: 0.1rem;
+}
+
+.loadingCursor {
+  display: inline-block;
+  color: #ff00ff;
+  text-shadow:
+    0 0 5px #ff00ff,
+    0 0 10px #ff00ff;
+  animation: loadingCursorBlink 1s infinite;
+  margin-left: 3px;
+}
+
+/* === ANIMATIONS === */
+
+/* Background Particles */
+@keyframes loginParticleFloat {
   0% {
-    opacity: 0.3;
+    transform: translateY(100vh) translateX(0) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
     transform: scale(1);
   }
+  90% {
+    opacity: 0.7;
+  }
   100% {
+    transform: translateY(-20vh) translateX(40px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Modal Border Glow */
+@keyframes modalBorderGlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Title Glows */
+@keyframes titlePrimaryGlow {
+  0% {
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  }
+  100% {
+    text-shadow:
+      0 0 40px rgba(0, 255, 255, 0.8),
+      0 0 60px rgba(0, 255, 255, 0.4);
+  }
+}
+
+@keyframes titleSecondaryGlow {
+  0% {
+    text-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+  }
+  100% {
+    text-shadow:
+      0 0 40px rgba(255, 0, 255, 0.8),
+      0 0 60px rgba(255, 0, 255, 0.4);
+  }
+}
+
+/* Title Glitch Effect */
+@keyframes titleGlitchEffect {
+  0%,
+  90%,
+  100% {
+    opacity: 0;
+  }
+  91%,
+  94% {
+    opacity: 0.8;
+    transform: translateX(2px);
+  }
+  92%,
+  93% {
+    opacity: 0.9;
+    transform: translateX(-2px);
+  }
+}
+
+/* Input Effects */
+@keyframes inputFlicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes inputGlowPulse {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
     opacity: 0.5;
-    transform: scale(1.03);
+  }
+}
+
+/* Loading Animations */
+@keyframes loadingOrbPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+@keyframes loadingOrbRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loadingCursorBlink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+  .loginModal {
+    padding: 2rem 1.5rem;
+    max-width: 380px;
+  }
+
+  .loginTitle {
+    font-size: 1.5rem;
+    letter-spacing: 0.1rem;
+  }
+
+  .loginInput {
+    padding: 0.9rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .loginButton {
+    padding: 0.9rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .loadingOrb {
+    width: 60px;
+    height: 60px;
+  }
+
+  .orbCore {
+    width: 22px;
+    height: 22px;
+  }
+
+  .orbRing1 {
+    width: 45px;
+    height: 45px;
+  }
+
+  .orbRing2 {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loginModal {
+    padding: 1.5rem 1rem;
+    max-width: 320px;
+  }
+
+  .loginTitle {
+    font-size: 1.3rem;
+  }
+
+  .loginInput {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .buttonGroup {
+    gap: 0.8rem;
+  }
+
+  .loginButton {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .cancelButton {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.85rem;
   }
 }
 
@@ -63,7 +643,7 @@
   bottom: -10px;
   width: 2px;
   height: 40px;
-  background: linear-gradient(to top, rgba(0,255,255,0.4), transparent);
+  background: linear-gradient(to top, rgba(0, 255, 255, 0.4), transparent);
   opacity: 0.5;
   animation: rise 8s linear infinite;
   z-index: 1;
@@ -73,7 +653,7 @@
 .rising-particle:nth-child(odd) {
   animation-duration: 8s;
   width: 1px;
-  background: linear-gradient(to top, rgba(255,0,255,0.3), transparent);
+  background: linear-gradient(to top, rgba(255, 0, 255, 0.3), transparent);
 }
 
 @keyframes rise {
@@ -100,7 +680,9 @@
   border-radius: 50%;
   background: rgba(0, 255, 255, 0.7);
   box-shadow: 0 0 12px rgba(0, 255, 255, 0.9);
-  animation: float 12s infinite ease-in-out, flicker 2.5s infinite ease-in-out;
+  animation:
+    float 12s infinite ease-in-out,
+    flicker 2.5s infinite ease-in-out;
   pointer-events: none;
   z-index: 2;
   transform-origin: center center;
@@ -136,18 +718,41 @@
 }
 
 @keyframes float {
-  0% { transform: translateY(0) translateX(0); }
-  30% { transform: translateY(-40px) translateX(20px); }
-  70% { transform: translateY(-20px) translateX(-10px); }
-  100% { transform: translateY(0) translateX(0); }
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+  30% {
+    transform: translateY(-40px) translateX(20px);
+  }
+  70% {
+    transform: translateY(-20px) translateX(-10px);
+  }
+  100% {
+    transform: translateY(0) translateX(0);
+  }
 }
 
 @keyframes flicker {
-  0%   { opacity: 0.1; transform: scale(1); }
-  25%  { opacity: 0.6; transform: scale(1.2); }
-  50%  { opacity: 1; transform: scale(0.8); }
-  75%  { opacity: 0.4; transform: scale(1.1); }
-  100% { opacity: 0.1; transform: scale(1); }
+  0% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  25% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(0.8);
+  }
+  75% {
+    opacity: 0.4;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
 }
 
 .effects-layer {
@@ -188,7 +793,9 @@
   font-size: 48px;
   font-weight: 800;
   color: #00f0ff;
-  text-shadow: 0 0 10px #00f0ff, 0 0 30px #00f0ff;
+  text-shadow:
+    0 0 10px #00f0ff,
+    0 0 30px #00f0ff;
   margin-bottom: 20px;
   z-index: 3;
 }
@@ -207,7 +814,11 @@
   width: 500px;
   height: 500px;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(0,255,255,0.6) 0%, transparent 80%);
+  background: radial-gradient(
+    circle,
+    rgba(0, 255, 255, 0.6) 0%,
+    transparent 80%
+  );
   filter: blur(100px);
   border-radius: 50%;
   z-index: 1;
@@ -270,7 +881,8 @@
   justify-content: center;
 }
 
-.acceptButton, .declineButton {
+.acceptButton,
+.declineButton {
   padding: 0.8rem 2rem;
   border-radius: 8px;
   font-weight: 600;
@@ -411,7 +1023,9 @@
   justify-content: center;
 }
 
-.nextButton, .backButton, .skipButton {
+.nextButton,
+.backButton,
+.skipButton {
   padding: 0.8rem 2rem;
   border-radius: 8px;
   font-weight: 600;
@@ -481,14 +1095,18 @@
   font-size: 20px;
   color: #ffffff;
   text-align: center;
-  text-shadow: 0 0 6px #0ff, 0 0 12px #0ff;
+  text-shadow:
+    0 0 6px #0ff,
+    0 0 12px #0ff;
   z-index: 3;
   transform: translateY(60px);
 }
 
 .brand-text {
   color: #ff00cc;
-  text-shadow: 0 0 6px #ff00cc, 0 0 14px #ff00cc;
+  text-shadow:
+    0 0 6px #ff00cc,
+    0 0 14px #ff00cc;
   font-size: 24px;
   font-weight: bold;
   z-index: 3;
@@ -532,7 +1150,8 @@
     right: 16px;
   }
 
-  .main-text, .brand-text {
+  .main-text,
+  .brand-text {
     font-size: 18px;
   }
 }
@@ -543,10 +1162,17 @@
 }
 
 /* Z-index structure update */
-.splash-container::before { z-index: 0; }        /* background */
-.effects-layer { z-index: 2; }                   /* starlight, fireflies, rising fx */
+.splash-container::before {
+  z-index: 0;
+} /* background */
+.effects-layer {
+  z-index: 2;
+} /* starlight, fireflies, rising fx */
 .avatar-wrapper,
 .splash-logo,
 .main-text,
 .brand-text,
-.loading-orb { z-index: 3; }                     /* content */
+.loading-orb {
+  z-index: 3;
+} /* content */
+

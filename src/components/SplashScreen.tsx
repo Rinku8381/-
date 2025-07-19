@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '@/styles/splash.module.css';
 import TermsModal from '@/components/TermsModal';
+import LoginModal from '@/components/LoginModal';
 
 export default function SplashScreen(): JSX.Element {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -12,6 +13,7 @@ export default function SplashScreen(): JSX.Element {
   const [isLoaded, setIsLoaded] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
   const [showAvatar, setShowAvatar] = useState(false);
   const [typingSequence, setTypingSequence] = useState({
     currentLine: 0,
@@ -164,12 +166,24 @@ export default function SplashScreen(): JSX.Element {
   const handleAccept = () => {
     setShowTerms(false);
     setTimeout(() => {
-      router.push('/login');
+      setShowLogin(true);
     }, 300);
   };
 
   const handleDecline = () => {
     setShowTerms(false);
+  };
+
+  const handleLogin = () => {
+    setShowLogin(false);
+    setTimeout(() => {
+      router.push('/dashboard');
+    }, 300);
+  };
+
+  const handleLoginCancel = () => {
+    setShowLogin(false);
+    setShowTerms(true);
   };
 
   return (
@@ -295,6 +309,14 @@ export default function SplashScreen(): JSX.Element {
           isVisible={showTerms}
           onAccept={handleAccept}
           onDecline={handleDecline}
+        />
+      )}
+
+      {showLogin && (
+        <LoginModal
+          isVisible={showLogin}
+          onLogin={handleLogin}
+          onCancel={handleLoginCancel}
         />
       )}
     </main>
