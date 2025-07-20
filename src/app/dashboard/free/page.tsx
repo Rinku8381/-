@@ -43,6 +43,7 @@ import CanvasAIEditor from '@/components/dashboard/CanvasAIEditor';
 import AIImageGenerationPanel from '@/components/dashboard/AIImageGenerationPanel';
 import VoiceCommandSystem from '@/components/dashboard/VoiceCommandSystem';
 import MyLibraryPanel from '@/components/dashboard/MyLibraryPanel';
+import AIGeneratorUltimate from '@/components/dashboard/AIGeneratorUltimate';
 
 // Types
 interface UserData {
@@ -142,11 +143,12 @@ const FreeDashboard: React.FC = () => {
     },
     {
       id: 'ai-generator',
-      title: 'AI Generator',
-      description: 'Advanced multi-modal AI generation',
+      title: 'AI Generator Ultimate',
+      description: 'Advanced multi-modal AI generation suite',
       icon: <Wand2 className='w-6 h-6 cyber-icon' />,
       category: 'ai-tools',
-      onClick: () => handlePanelOpen('ai-features'),
+      isNew: true,
+      onClick: () => handlePanelOpen('ai-generator'),
     },
     {
       id: 'my-library',
@@ -769,20 +771,20 @@ const FreeDashboard: React.FC = () => {
       )}
 
       {/* Modal Panels */}
+      {activePanel === 'ai-generator' && (
+        <AIGeneratorUltimate
+          isVisible={true}
+          onClose={handlePanelClose}
+          userTier='free'
+        />
+      )}
+
       {activePanel === 'ai-features' && (
-        <div className='fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4'>
-          <div className='relative w-full max-w-4xl max-h-[90vh] overflow-auto'>
-            <AIImageGenerationPanel
-              onClose={handlePanelClose}
-              isVisible={true}
-              userTokens={userData.tokens}
-              userTier='free'
-              onTokensUpdate={newTokens =>
-                setUserData(prev => ({ ...prev, tokens: newTokens }))
-              }
-            />
-          </div>
-        </div>
+        <AIGeneratorUltimate
+          isVisible={true}
+          onClose={handlePanelClose}
+          userTier='free'
+        />
       )}
 
       {activePanel === 'library' && (
