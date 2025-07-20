@@ -22,6 +22,9 @@ import {
   Shuffle,
   Star,
   Sparkles,
+  Volume2,
+  Play,
+  Pause,
 } from 'lucide-react';
 
 interface MediaItem {
@@ -30,12 +33,14 @@ interface MediaItem {
   url: string;
   thumbnail: string;
   title: string;
+  prompt?: string; // For search functionality
   style: string;
   aspectRatio?: string;
   duration?: string;
   size: string;
   tokenCost: number;
   dateCreated: Date;
+  timeCreated?: string; // HH:MM AM/PM format
   isFavorite: boolean;
   tags: string[];
 }
@@ -56,8 +61,9 @@ const FILTER_TABS = [
 
 const SORT_OPTIONS = [
   { id: 'date', label: 'Date Created', icon: Clock },
+  { id: 'tokens', label: 'Tokens Used', icon: Zap },
+  { id: 'style', label: 'Style', icon: Star },
   { id: 'type', label: 'Type', icon: Type },
-  { id: 'tokens', label: 'Token Spent', icon: Zap },
   { id: 'alphabetical', label: 'Alphabetical', icon: Type },
 ];
 
@@ -69,11 +75,13 @@ const MOCK_MEDIA_ITEMS: MediaItem[] = [
     url: 'https://picsum.photos/800/800?random=1',
     thumbnail: 'https://picsum.photos/300/300?random=1',
     title: 'Cyberpunk Cityscape',
+    prompt: 'A futuristic cyberpunk cityscape with neon lights and flying cars',
     style: 'Cyberpunk',
     aspectRatio: '1:1',
     size: '1024x1024',
     tokenCost: 10,
-    dateCreated: new Date('2025-01-15'),
+    dateCreated: new Date('2025-01-15T14:30:00'),
+    timeCreated: '2:30 PM',
     isFavorite: true,
     tags: ['cyberpunk', 'city', 'neon'],
   },
@@ -83,11 +91,13 @@ const MOCK_MEDIA_ITEMS: MediaItem[] = [
     url: 'https://picsum.photos/800/1200?random=2',
     thumbnail: 'https://picsum.photos/300/400?random=2',
     title: 'Anime Character Portrait',
+    prompt: 'Beautiful anime character with purple hair and glowing eyes',
     style: 'Anime Style',
     aspectRatio: '9:16',
     size: '768x1024',
     tokenCost: 10,
-    dateCreated: new Date('2025-01-14'),
+    dateCreated: new Date('2025-01-14T09:15:00'),
+    timeCreated: '9:15 AM',
     isFavorite: false,
     tags: ['anime', 'character', 'portrait'],
   },
@@ -97,11 +107,13 @@ const MOCK_MEDIA_ITEMS: MediaItem[] = [
     url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
     thumbnail: 'https://picsum.photos/300/200?random=3',
     title: 'AI Generated Animation',
+    prompt: 'Smooth animation of morphing geometric shapes',
     style: 'Motion Graphics',
     duration: '00:30',
     size: '1280x720',
     tokenCost: 50,
-    dateCreated: new Date('2025-01-13'),
+    dateCreated: new Date('2025-01-13T16:45:00'),
+    timeCreated: '4:45 PM',
     isFavorite: true,
     tags: ['animation', 'motion', 'ai'],
   },
@@ -111,11 +123,13 @@ const MOCK_MEDIA_ITEMS: MediaItem[] = [
     url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
     thumbnail: '/api/placeholder/300/300',
     title: 'AI Music Composition',
+    prompt: 'Synthwave track with nostalgic 80s vibes',
     style: 'Synthwave',
     duration: '02:45',
     size: '320kbps',
     tokenCost: 25,
-    dateCreated: new Date('2025-01-12'),
+    dateCreated: new Date('2025-01-12T20:00:00'),
+    timeCreated: '8:00 PM',
     isFavorite: false,
     tags: ['music', 'synthwave', 'ai'],
   },
@@ -137,10 +151,30 @@ export default function MyLibraryPanel({
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
   const [welcomeText, setWelcomeText] = useState('');
   const [showParticles, setShowParticles] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   const welcomeMessage =
     "Here's all your wonderful creations, Master. Want to relive the magic?";
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Utility function to play sound effect
+  const playHologramBlip = () => {
+    if (typeof window !== 'undefined') {
+      try {
+        const audio = new Audio(
+          'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBTqT2f3DciUELIHU8+OQQQsVX7Tq6qhVFApGn+DzvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS2fDNeSsFJHfH8N2QQAoUXrTp66hVFA=='
+        );
+        audio.volume = 0.3;
+        audio.play().catch(() => {
+          // Ignore audio play errors (browser restrictions)
+        });
+      } catch (error) {
+        // Ignore audio creation errors
+      }
+    }
+  };
 
   // Typewriter effect for welcome message
   useEffect(() => {
@@ -190,6 +224,8 @@ export default function MyLibraryPanel({
         item =>
           item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.style.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (item.prompt &&
+            item.prompt.toLowerCase().includes(searchQuery.toLowerCase())) ||
           item.tags.some(tag =>
             tag.toLowerCase().includes(searchQuery.toLowerCase())
           )
@@ -205,6 +241,8 @@ export default function MyLibraryPanel({
           return a.type.localeCompare(b.type);
         case 'tokens':
           return b.tokenCost - a.tokenCost;
+        case 'style':
+          return a.style.localeCompare(b.style);
         case 'alphabetical':
           return a.title.localeCompare(b.title);
         default:
@@ -216,6 +254,7 @@ export default function MyLibraryPanel({
   }, [mediaItems, activeFilter, sortBy, searchQuery]);
 
   const toggleFavorite = (itemId: string) => {
+    playHologramBlip(); // Play sound effect
     setMediaItems(prev =>
       prev.map(item =>
         item.id === itemId ? { ...item, isFavorite: !item.isFavorite } : item
@@ -443,7 +482,7 @@ export default function MyLibraryPanel({
                 <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-cyan-400/50' />
                 <input
                   type='text'
-                  placeholder='Search your creations...'
+                  placeholder='Search by title, prompt, or style...'
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   className='w-full bg-black/30 border border-cyan-500/30 rounded-xl pl-10 pr-4 py-3 text-white placeholder-cyan-400/50 focus:border-cyan-400 focus:outline-none transition-all duration-300'
@@ -534,10 +573,26 @@ export default function MyLibraryPanel({
                       exit={{ opacity: 0, scale: 0.8, y: 20 }}
                       whileHover={{
                         scale: 1.05,
+                        y: -5,
                         rotateY: 5,
                         transition: { duration: 0.2 },
                       }}
-                      className='group relative bg-black/40 border-2 border-cyan-500/20 rounded-xl overflow-hidden hover:border-cyan-400/60 transition-all duration-300 cursor-pointer media-card-hover hologram-swipe glitch-border'
+                      onHoverStart={event => {
+                        setHoveredItem(item.id);
+                        setShowTooltip(true);
+                        const rect = (
+                          event.target as HTMLElement
+                        ).getBoundingClientRect();
+                        setTooltipPosition({
+                          x: rect.left + rect.width / 2,
+                          y: rect.top - 10,
+                        });
+                      }}
+                      onHoverEnd={() => {
+                        setHoveredItem(null);
+                        setShowTooltip(false);
+                      }}
+                      className='group relative bg-black/40 border-2 border-cyan-500/20 rounded-xl overflow-hidden hover:border-cyan-400/60 hover:shadow-[0_0_25px_rgba(0,255,255,0.4)] transition-all duration-300 cursor-pointer media-card-hover hologram-swipe glitch-border'
                     >
                       {/* Selection Checkbox */}
                       <div className='absolute top-3 left-3 z-10'>
@@ -563,19 +618,22 @@ export default function MyLibraryPanel({
                       <div className='absolute top-3 right-3 z-10'>
                         <motion.button
                           whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
                           onClick={e => {
                             e.stopPropagation();
                             toggleFavorite(item.id);
                           }}
-                          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
                             item.isFavorite
-                              ? 'bg-red-500/80 text-white'
-                              : 'bg-black/50 text-gray-400 hover:text-red-400'
+                              ? 'bg-purple-500/90 text-white shadow-[0_0_15px_rgba(147,51,234,0.6)] border-2 border-purple-400'
+                              : 'bg-black/50 text-gray-400 hover:text-purple-400 hover:bg-purple-500/20 border-2 border-transparent hover:border-purple-400/50'
                           }`}
                         >
-                          <Heart
-                            className={`w-4 h-4 ${item.isFavorite ? 'fill-current' : ''}`}
-                          />
+                          {item.isFavorite ? (
+                            <span className='text-sm animate-pulse'>💜</span>
+                          ) : (
+                            <Heart className='w-4 h-4' />
+                          )}
                         </motion.button>
                       </div>
 
@@ -656,28 +714,39 @@ export default function MyLibraryPanel({
 
                       {/* Item Info */}
                       <div className='p-4'>
-                        <h3 className='text-white font-semibold text-sm mb-2 line-clamp-1'>
+                        <h3 className='text-cyan-100 font-semibold text-sm mb-2 line-clamp-1 group-hover:text-white transition-colors'>
                           {item.title}
                         </h3>
 
                         {/* Tags */}
-                        <div className='flex items-center gap-1 mb-3 text-xs'>
+                        <div className='flex items-center gap-2 mb-3 text-xs'>
                           <span
-                            className={`px-2 py-1 rounded-full border ${typeColors} bg-black/30`}
+                            className={`px-3 py-1 rounded-full border ${typeColors} bg-black/30 font-medium backdrop-blur-sm`}
                           >
                             {item.type === 'image'
                               ? `${item.style} · ${item.aspectRatio}`
                               : `${item.style} · ${item.size}`}
                           </span>
+                          <span className='px-2 py-1 bg-yellow-500/20 text-yellow-300 rounded-full border border-yellow-500/30 font-medium'>
+                            {item.tokenCost} tokens
+                          </span>
                         </div>
 
                         {/* Meta Info */}
-                        <div className='flex items-center justify-between text-xs text-gray-400'>
-                          <span>{item.dateCreated.toLocaleDateString()}</span>
-                          <div className='flex items-center gap-1'>
-                            <Zap className='w-3 h-3 text-yellow-400' />
-                            <span>{item.tokenCost}</span>
+                        <div className='flex items-center justify-between text-xs'>
+                          <div className='flex items-center gap-2 text-cyan-300'>
+                            <Clock className='w-3 h-3' />
+                            <span>
+                              {item.timeCreated ||
+                                item.dateCreated.toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                            </span>
                           </div>
+                          <span className='text-gray-400'>
+                            {item.dateCreated.toLocaleDateString()}
+                          </span>
                         </div>
                       </div>
 
@@ -694,19 +763,51 @@ export default function MyLibraryPanel({
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className='flex flex-col items-center justify-center h-64 text-center'
+                className='flex flex-col items-center justify-center h-64 text-center space-y-6'
               >
-                <div className='w-16 h-16 rounded-full border-2 border-cyan-500/30 border-dashed flex items-center justify-center mb-4'>
-                  <Sparkles className='w-8 h-8 text-cyan-400/50' />
+                {/* Seraphine Avatar */}
+                <div className='relative'>
+                  <div className='w-24 h-24 rounded-full border-2 border-purple-500/30 border-dashed flex items-center justify-center mb-4 bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-sm'>
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 5, -5, 0],
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                      }}
+                      className='text-4xl'
+                    >
+                      💜
+                    </motion.div>
+                  </div>
+                  <div className='absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-full opacity-20 blur-lg animate-pulse'></div>
                 </div>
-                <h3 className='text-xl font-bold text-cyan-400/50 mb-2'>
-                  No creations found
-                </h3>
-                <p className='text-cyan-400/40'>
-                  {searchQuery
-                    ? 'Try a different search term'
-                    : 'Start creating to see your masterpieces here'}
-                </p>
+
+                {/* Message */}
+                <div className='space-y-3'>
+                  <h3 className='text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text'>
+                    {searchQuery
+                      ? 'No matches found'
+                      : "You haven't created anything yet, Master..."}
+                  </h3>
+                  <p className='text-cyan-300/70 max-w-md'>
+                    {searchQuery
+                      ? 'Try adjusting your search terms or explore different filters'
+                      : 'Shall we begin? Let your imagination flow and create something magical! 💜'}
+                  </p>
+                  {!searchQuery && (
+                    <motion.div
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className='text-sm text-purple-400/80 italic'
+                    >
+                      ✨ Every masterpiece starts with a single spark ✨
+                    </motion.div>
+                  )}
+                </div>
               </motion.div>
             )}
           </div>
@@ -812,6 +913,36 @@ export default function MyLibraryPanel({
                 </div>
               </div>
             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Hover Tooltip */}
+      <AnimatePresence>
+        {showTooltip && hoveredItem && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            className='fixed z-[70] pointer-events-none'
+            style={{
+              left: tooltipPosition.x,
+              top: tooltipPosition.y,
+              transform: 'translateX(-50%) translateY(-100%)',
+            }}
+          >
+            <div className='bg-black/95 border border-cyan-400/50 rounded-lg px-4 py-2 backdrop-blur-sm shadow-[0_0_20px_rgba(0,255,255,0.3)]'>
+              <div className='flex items-center gap-2 text-sm text-cyan-100'>
+                <span className='text-lg'>💾</span>
+                <span>
+                  Another masterpiece, Master. I've archived this for you
+                </span>
+                <span className='text-purple-400'>💜</span>
+              </div>
+              {/* Tooltip arrow */}
+              <div className='absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-cyan-400/50'></div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
