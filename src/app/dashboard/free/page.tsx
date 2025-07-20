@@ -1,63 +1,50 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import styles from '@/styles/dashboard.module.css';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
-  User,
   Settings,
-  Music,
-  Download,
-  Share2,
-  Play,
   Lock,
   Zap,
-  Copy,
-  MessageCircle,
-  Send,
-  Star,
   Coins,
   Crown,
   Gift,
-  Users,
   Bell,
-  Globe,
   Palette,
-  Volume2,
-  Image,
+  Image as ImageIcon,
   Video,
   Mic,
-  UserCircle,
   ShoppingBag,
-  CreditCard,
-  Calendar,
   X,
   Layers,
-  Terminal,
   Sparkles,
   Brain,
+  Wand2,
+  Library,
+  Archive,
+  LogIn,
+  ChevronRight,
+  BarChart3,
+  Star,
+  Rocket,
+  Shield,
+  Headphones,
+  Eye,
+  Activity,
 } from 'lucide-react';
 
 // Import dashboard components
 import UserSettingsPanel from '@/components/dashboard/UserSettingsPanel';
 import StudioLibrary from '@/components/dashboard/StudioLibrary';
-import MiniAIFeatures from '@/components/dashboard/MiniAIFeatures';
 import InviteTokenPanel from '@/components/dashboard/InviteTokenPanel';
 import ShopPanel from '@/components/dashboard/ShopPanel';
 import SubscriptionPopup from '@/components/dashboard/SubscriptionPopup';
-
-// Import new dashboard components
 import CanvasAIEditor from '@/components/dashboard/CanvasAIEditor';
-import NeuralTokenSystem from '@/components/dashboard/NeuralTokenSystem';
-import LoginSystem from '@/components/dashboard/LoginSystem';
-import VoiceCommandSystem from '@/components/dashboard/VoiceCommandSystem';
-import RisingParticlesBackground from '@/components/dashboard/RisingParticlesBackground';
-import SeraphineAvatar from '@/components/dashboard/SeraphineAvatar';
-import CyberpunkAudioSystem from '@/components/CyberpunkAudioSystem';
 import AIImageGenerationPanel from '@/components/dashboard/AIImageGenerationPanel';
-import SeraphineStyleLibrary from '@/components/dashboard/SeraphineStyleLibrary';
-import NeuralPromptArchive from '@/components/dashboard/NeuralPromptArchive';
+import VoiceCommandSystem from '@/components/dashboard/VoiceCommandSystem';
+import MyLibraryPanel from '@/components/dashboard/MyLibraryPanel';
 
+// Types
 interface UserData {
   name: string;
   avatar: string;
@@ -68,36 +55,41 @@ interface UserData {
     voices: number;
     videos: number;
   };
+  usedLimits: {
+    images: number;
+    voices: number;
+    videos: number;
+  };
 }
 
-function SearchParamsHandler({
-  onShowSubscription,
-}: {
-  onShowSubscription: (show: boolean) => void;
-}) {
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    if (searchParams?.get('showSubscription') === 'true') {
-      onShowSubscription(true);
-    }
-  }, [searchParams, onShowSubscription]);
-
-  return null;
+interface DashboardFeature {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  isLocked?: boolean;
+  isPremium?: boolean;
+  isNew?: boolean;
+  category: 'ai-tools' | 'library' | 'social' | 'premium';
+  onClick: () => void;
 }
 
-export default function FreeDashboard(): JSX.Element {
+interface QuickAccessItem {
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  glow?: string;
+  isActive?: boolean;
+  hasNotification?: boolean;
+}
+
+const FreeDashboard: React.FC = () => {
   const router = useRouter();
-  const [showSubscription, setShowSubscription] = useState(false);
   const [activePanel, setActivePanel] = useState<string | null>(null);
-  const [voiceControlActive, setVoiceControlActive] = useState(false);
-  const [beatData, setBeatData] = useState<number[]>([]);
-  const [seraphineVisible, setSeraphineVisible] = useState(true);
-  const [seraphineMood, setSeraphineMood] = useState<
-    'idle' | 'active' | 'thinking' | 'happy' | 'excited' | 'helping'
-  >('idle');
-  const [audioEnabled, setAudioEnabled] = useState(false);
-  const [audioVolume, setAudioVolume] = useState(0.3);
+  const [showSubscription, setShowSubscription] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [userData, setUserData] = useState<UserData>({
     name: 'Neural User',
     avatar: '/assets/splash/SeraphineAvatar.gif',
@@ -108,7 +100,22 @@ export default function FreeDashboard(): JSX.Element {
       voices: 5,
       videos: 1,
     },
+    usedLimits: {
+      images: 2,
+      voices: 1,
+      videos: 0,
+    },
   });
+
+  // Entry animation and premium modal trigger
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+      // Show premium modal after a brief delay
+      setTimeout(() => setShowPremiumModal(true), 1500);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handlePanelOpen = (panelName: string) => {
     setActivePanel(panelName);
@@ -122,454 +129,723 @@ export default function FreeDashboard(): JSX.Element {
     setShowSubscription(true);
   };
 
-  const handleVoiceCommand = (command: string, confidence: number) => {
-    console.log('Voice command:', command, 'Confidence:', confidence);
+  // Feature grid data with enhanced cyberpunk styling
+  const dashboardFeatures: DashboardFeature[] = [
+    {
+      id: 'ai-studio',
+      title: 'AI Studio',
+      description: 'Create stunning AI images with neural networks',
+      icon: <Brain className='w-6 h-6 cyber-icon' />,
+      category: 'ai-tools',
+      isNew: true,
+      onClick: () => handlePanelOpen('ai-features'),
+    },
+    {
+      id: 'ai-generator',
+      title: 'AI Generator',
+      description: 'Advanced multi-modal AI generation',
+      icon: <Wand2 className='w-6 h-6 cyber-icon' />,
+      category: 'ai-tools',
+      onClick: () => handlePanelOpen('ai-features'),
+    },
+    {
+      id: 'my-library',
+      title: 'My Library',
+      description: 'Your digital creation vault',
+      icon: <Library className='w-6 h-6 cyber-icon' />,
+      category: 'library',
+      onClick: () => handlePanelOpen('library'),
+    },
+    {
+      id: 'canvas-editor',
+      title: 'Canvas Editor',
+      description: 'Professional AI editing suite',
+      icon: <Layers className='w-6 h-6 cyber-icon' />,
+      category: 'ai-tools',
+      isLocked: true,
+      isPremium: true,
+      onClick: () => handlePanelOpen('canvas'),
+    },
+    {
+      id: 'style-library',
+      title: 'Style Library',
+      description: 'Curated art styles & neural presets',
+      icon: <Palette className='w-6 h-6 cyber-icon' />,
+      category: 'library',
+      onClick: () => handlePanelOpen('library'),
+    },
+    {
+      id: 'prompt-archive',
+      title: 'Prompt Archive',
+      description: 'Your command history database',
+      icon: <Archive className='w-6 h-6 cyber-icon' />,
+      category: 'library',
+      onClick: () => handlePanelOpen('library'),
+    },
+    {
+      id: 'token-shop',
+      title: 'Token Shop',
+      description: 'Acquire neural processing credits',
+      icon: <ShoppingBag className='w-6 h-6 cyber-icon' />,
+      category: 'premium',
+      onClick: () => handlePanelOpen('shop'),
+    },
+    {
+      id: 'earn-tokens',
+      title: 'Earn Tokens',
+      description: 'Expand your network & earn rewards',
+      icon: <Gift className='w-6 h-6 cyber-icon' />,
+      category: 'social',
+      onClick: () => handlePanelOpen('invite'),
+    },
+    {
+      id: 'neural-login',
+      title: 'Neural Profile',
+      description: 'Identity & system configuration',
+      icon: <LogIn className='w-6 h-6 cyber-icon' />,
+      category: 'social',
+      onClick: () => handlePanelOpen('settings'),
+    },
+  ];
 
-    setSeraphineMood('helping');
-    setTimeout(() => setSeraphineMood('active'), 2000);
+  const quickAccessItems = [
+    {
+      label: 'Recent Creations',
+      icon: <Activity className='w-4 h-4' />,
+      onClick: () => handlePanelOpen('library'),
+      glow: 'cyber-glow',
+    },
+    {
+      label: 'Voice Commands',
+      icon: <Mic className='w-4 h-4' />,
+      onClick: () => setVoiceEnabled(!voiceEnabled),
+      glow: 'cyber-glow-purple',
+      isActive: voiceEnabled,
+    },
+    {
+      label: 'Neural Settings',
+      icon: <Settings className='w-4 h-4' />,
+      onClick: () => handlePanelOpen('settings'),
+      glow: 'cyber-glow-cyan',
+    },
+    {
+      label: 'System Alerts',
+      icon: <Bell className='w-4 h-4' />,
+      onClick: () => {},
+      glow: 'cyber-glow-pink',
+      hasNotification: true,
+    },
+  ];
 
-    switch (command) {
-      case 'activate':
-        setSeraphineMood('excited');
-        break;
-      case 'generate_image':
-        handlePanelOpen('ai-features');
-        setSeraphineMood('happy');
-        break;
-      case 'open_canvas':
-        handlePanelOpen('canvas');
-        break;
-      case 'show_library':
-        handlePanelOpen('library');
-        break;
-      case 'open_settings':
-        handlePanelOpen('settings');
-        break;
-      case 'upgrade_account':
-        handleUpgrade();
-        setSeraphineMood('excited');
-        break;
-      case 'show_profile':
-        handlePanelOpen('settings');
-        break;
-      case 'show_help':
-        // Help is handled by the voice component itself
-        break;
-      default:
-        console.log('Unknown command:', command);
-    }
-  };
+  useEffect(() => {
+    // Set progress bar widths using CSS custom properties
+    const progressBars = document.querySelectorAll(
+      '.seraphine-progress-bar[data-progress-width]'
+    );
 
-  const handleSeraphineCommand = (command: string) => {
-    setSeraphineMood('thinking');
-    setTimeout(() => handleVoiceCommand(command, 1.0), 500);
-  };
-
-  const handleTokenPurchase = (packageId: string) => {
-    console.log('Token purchase:', packageId);
-    // Implement token purchase logic
-  };
+    progressBars.forEach(bar => {
+      const element = bar as HTMLElement;
+      const progressWidth = element.getAttribute('data-progress-width');
+      if (progressWidth) {
+        element.style.setProperty('--progress-width', progressWidth);
+      }
+    });
+  }, [userData.usedLimits, userData.dailyLimits]);
 
   return (
-    <div className={styles.dashboardContainer}>
-      {/* Rising Particles Background */}
-      <RisingParticlesBackground
-        intensity='medium'
-        animated={true}
-        musicSync={true}
-        beatData={beatData}
-      />
-
-      {/* Animated Background */}
-      <div className={styles.animatedBackground}>
-        <div className={styles.neuralGrid}></div>
-        <div className={styles.particleField}>
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className={`${styles.particle} ${styles[`particle${(i % 4) + 1}`]}`}
-            />
-          ))}
+    <div className='min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900 text-white overflow-hidden'>
+      {/* Enhanced Animated Background */}
+      <div className='fixed inset-0 pointer-events-none'>
+        <div className='absolute inset-0 opacity-40'>
+          <div className='w-full h-full bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10 seraphine-grid-bg'></div>
         </div>
+        <div className='absolute inset-0 bg-gradient-radial from-cyan-500/5 via-transparent to-magenta-500/5'></div>
+        {/* Ambient orbs */}
+        <div className='absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-radial from-cyan-400/20 to-transparent rounded-full blur-3xl animate-pulse'></div>
+        <div className='absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-radial from-purple-400/15 to-transparent rounded-full blur-3xl animate-pulse seraphine-ambient-delay'></div>
       </div>
 
-      {/* Header */}
-      <header className={styles.dashboardHeader}>
-        <div className={styles.headerLeft}>
-          <div className={styles.logo}>
-            <Zap className={styles.logoIcon} />
-            <span className={styles.logoText}>Seraphine V1.5</span>
-            <span className={styles.freeBadge}>FREE</span>
-          </div>
-        </div>
+      {/* TopBar with enhanced styling */}
+      <header
+        className={`relative z-10 border-b border-cyan-500/30 cyber-glass-cyan ${isLoaded ? 'slide-in-up' : 'opacity-0'}`}
+      >
+        <div className='max-w-7xl mx-auto px-6 py-4'>
+          <div className='flex items-center justify-between'>
+            {/* Logo Section */}
+            <div className='flex items-center space-x-4'>
+              <div className='flex items-center space-x-3'>
+                <div className='relative'>
+                  <div className='w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-xl flex items-center justify-center cyber-glow'>
+                    <Zap className='w-6 h-6 text-white' />
+                  </div>
+                  <div className='absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse'></div>
+                </div>
+                <div>
+                  <h1 className='text-2xl font-bold gradient-text-animate'>
+                    Seraphine Hybrid V1.5
+                  </h1>
+                  <div className='flex items-center space-x-2'>
+                    <span className='text-xs text-cyan-400 bg-cyan-500/20 px-3 py-1 rounded-full border border-cyan-500/40 cyber-glow'>
+                      FREE ACCESS
+                    </span>
+                    <div className='w-2 h-2 bg-green-400 rounded-full animate-pulse'></div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        <div className={styles.headerCenter}>
-          <div className={styles.tokenDisplay}>
-            <Coins className={styles.tokenIcon} />
-            <span className={styles.tokenCount}>{userData.tokens}</span>
-            <span className={styles.tokenLabel}>Tokens</span>
-          </div>
-        </div>
+            {/* Enhanced Token Display */}
+            <div className='flex items-center space-x-3 cyber-glass-purple px-6 py-3 rounded-2xl border border-purple-500/40 cyber-glow-purple hover:scale-105 transition-all duration-300'>
+              <div className='relative'>
+                <Coins className='w-6 h-6 text-yellow-400' />
+                <div className='absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-ping'></div>
+              </div>
+              <div className='text-center'>
+                <div className='text-2xl font-bold text-yellow-400'>
+                  {userData.tokens}
+                </div>
+                <div className='text-xs text-yellow-400/70'>Neural Credits</div>
+              </div>
+            </div>
 
-        <div className={styles.headerRight}>
-          <button
-            onClick={() => handlePanelOpen('settings')}
-            className={styles.userButton}
-          >
-            <img
-              src={userData.avatar}
-              alt='Avatar'
-              className={styles.userAvatar}
-            />
-            <span className={styles.userName}>{userData.name}</span>
-            <Settings className={styles.settingsIcon} />
-          </button>
+            {/* Enhanced User Profile */}
+            <div className='flex items-center space-x-4'>
+              <button
+                className='relative p-3 cyber-glass rounded-xl border border-gray-700 hover:border-cyan-500/50 transition-all duration-300 notification-pulse'
+                title='System Alerts'
+                aria-label='View system notifications'
+              >
+                <Bell className='w-5 h-5 text-gray-400 hover:text-cyan-400' />
+                <div className='absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center'>
+                  <span className='text-xs text-white font-bold'>3</span>
+                </div>
+              </button>
+              <div className='flex items-center space-x-3 cyber-glass px-4 py-2 rounded-xl border border-gray-700 hover:border-cyan-500/50 transition-all duration-300 hover:cyber-glow'>
+                <div className='relative'>
+                  <img
+                    src={userData.avatar}
+                    alt='Neural avatar'
+                    className='w-8 h-8 rounded-full border-2 border-cyan-500/50'
+                  />
+                  <div className='absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-gray-900'></div>
+                </div>
+                <div>
+                  <div className='text-sm font-medium text-gray-300'>
+                    {userData.name}
+                  </div>
+                  <div className='text-xs text-cyan-400'>Neural Operative</div>
+                </div>
+                <ChevronRight className='w-4 h-4 text-gray-400 hover:text-cyan-400 transition-colors' />
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
-      {/* Main Dashboard Grid */}
-      <main className={styles.dashboardMain}>
-        {/* Quick Actions */}
-        <section className={styles.quickActions}>
-          <h2 className={styles.sectionTitle}>
-            <Zap className={styles.sectionIcon} />
-            Quick Actions
-          </h2>
-          <div className={styles.actionGrid}>
-            <button
-              onClick={() => handlePanelOpen('ai-features')}
-              className={`${styles.actionCard} ${styles.aiCard}`}
-              aria-label='Open AI Studio to generate content'
-            >
-              <div className={styles.cardIcon} aria-hidden='true'>
-                {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                <Image />
-              </div>
-              <span className={styles.cardTitle}>AI Studio</span>
-              <span className={styles.cardDesc}>Generate content</span>
-              <div className={styles.cardGlow}></div>
-            </button>
-
-            <button
-              onClick={() => handlePanelOpen('library')}
-              className={`${styles.actionCard} ${styles.libraryCard}`}
-            >
-              <UserCircle className={styles.cardIcon} />
-              <span className={styles.cardTitle}>My Library</span>
-              <span className={styles.cardDesc}>Saved creations</span>
-              <div className={styles.cardGlow}></div>
-            </button>
-
-            <button
-              onClick={() => handlePanelOpen('invite')}
-              className={`${styles.actionCard} ${styles.inviteCard}`}
-            >
-              <Gift className={styles.cardIcon} />
-              <span className={styles.cardTitle}>Earn Tokens</span>
-              <span className={styles.cardDesc}>Invite friends</span>
-              <div className={styles.cardGlow}></div>
-            </button>
-
-            <button
-              onClick={() => handlePanelOpen('shop')}
-              className={`${styles.actionCard} ${styles.shopCard}`}
-            >
-              <Crown className={styles.cardIcon} />
-              <span className={styles.cardTitle}>Premium</span>
-              <span className={styles.cardDesc}>Unlock features</span>
-              <div className={styles.cardGlow}></div>
-            </button>
-
-            <button
-              onClick={() => handlePanelOpen('canvas')}
-              className={`${styles.actionCard} ${styles.canvasCard}`}
-              aria-label='Open Neural Canvas Editor (Premium)'
-            >
-              <Layers className={styles.cardIcon} />
-              <span className={styles.cardTitle}>Canvas Editor</span>
-              <span className={styles.cardDesc}>AI image editing</span>
-              <Lock className='absolute top-2 right-2 w-4 h-4 text-yellow-400' />
-              <div className={styles.cardGlow}></div>
-            </button>
-
-            <button
-              onClick={() => handlePanelOpen('tokens')}
-              className={`${styles.actionCard} ${styles.tokensCard}`}
-              aria-label='Open Neural Token System'
-            >
-              <Coins className={styles.cardIcon} />
-              <span className={styles.cardTitle}>Token Shop</span>
-              <span className={styles.cardDesc}>Buy more tokens</span>
-              <div className={styles.cardGlow}></div>
-            </button>
-
-            <button
-              onClick={() => handlePanelOpen('ai-generator')}
-              className={`${styles.actionCard} ${styles.aiGeneratorCard}`}
-              aria-label='Open AI Image Generation Panel'
-            >
-              <Sparkles className={styles.cardIcon} />
-              <span className={styles.cardTitle}>AI Generator</span>
-              <span className={styles.cardDesc}>Create AI images</span>
-              <div className={styles.cardGlow}></div>
-            </button>
-
-            <button
-              onClick={() => handlePanelOpen('style-library')}
-              className={`${styles.actionCard} ${styles.styleLibraryCard}`}
-              aria-label='Open Seraphine Style Library'
-            >
-              <Palette className={styles.cardIcon} />
-              <span className={styles.cardTitle}>Style Library</span>
-              <span className={styles.cardDesc}>AI models & styles</span>
-              <div className={styles.cardGlow}></div>
-            </button>
-
-            <button
-              onClick={() => handlePanelOpen('prompt-archive')}
-              className={`${styles.actionCard} ${styles.promptArchiveCard}`}
-              aria-label='Open Neural Prompt Archive'
-            >
-              <Terminal className={styles.cardIcon} />
-              <span className={styles.cardTitle}>Prompt Archive</span>
-              <span className={styles.cardDesc}>Saved prompts</span>
-              <div className={styles.cardGlow}></div>
-            </button>
-
-            <button
-              onClick={() => handlePanelOpen('login')}
-              className={`${styles.actionCard} ${styles.loginCard}`}
-              aria-label='Open Login System'
-            >
-              <Brain className={styles.cardIcon} />
-              <span className={styles.cardTitle}>Neural Login</span>
-              <span className={styles.cardDesc}>Multi-tier access</span>
-              <div className={styles.cardGlow}></div>
-            </button>
-          </div>
-        </section>
-
-        {/* Feature Overview */}
-        <section className={styles.featureOverview}>
-          <h2 className={styles.sectionTitle}>
-            <Star className={styles.sectionIcon} />
-            Daily Limits
-          </h2>
-          <div className={styles.limitsGrid}>
-            <div className={styles.limitCard}>
-              <div className={styles.limitIcon} aria-hidden='true'>
-                {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                <Image />
-              </div>
-              <div className={styles.limitInfo}>
-                <span className={styles.limitTitle}>AI Images</span>
-                <div className={styles.limitBar}>
-                  <div
-                    className={`${styles.limitProgress} ${styles.imageProgress} ${styles.width66}`}
-                  ></div>
+      {/* Main Content */}
+      <main className='relative z-10 max-w-7xl mx-auto px-6 py-8'>
+        <div className='grid grid-cols-1 lg:grid-cols-4 gap-8'>
+          {/* Enhanced Left Sidebar */}
+          <div
+            className={`lg:col-span-1 space-y-6 ${isLoaded ? 'slide-in-left animate-delay-200' : 'opacity-0'}`}
+          >
+            {/* Quick Access Panel */}
+            <div className='cyber-glass-cyan rounded-3xl p-6 border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 cyber-glow'>
+              <h2 className='text-xl font-bold text-cyan-300 mb-6 flex items-center space-x-3'>
+                <div className='p-2 bg-cyan-500/20 rounded-lg'>
+                  <Rocket className='w-5 h-5' />
                 </div>
-                <span className={styles.limitText}>2/3 used</span>
+                <span>Quick Access</span>
+              </h2>
+              <div className='space-y-3'>
+                {quickAccessItems.map((item, index) => (
+                  <button
+                    key={index}
+                    onClick={item.onClick}
+                    className={`
+                      w-full flex items-center space-x-4 p-4 cyber-glass rounded-xl border border-transparent 
+                      hover:border-cyan-500/40 transition-all duration-300 group relative overflow-hidden
+                      ${item.isActive ? 'border-purple-500/50 cyber-glow-purple' : ''}
+                    `}
+                  >
+                    <div
+                      className={`relative p-2 rounded-lg ${item.glow} transition-all duration-300 group-hover:scale-110`}
+                    >
+                      <div
+                        className={`text-cyan-400 group-hover:text-white transition-colors ${item.isActive ? 'text-purple-400' : ''}`}
+                      >
+                        {item.icon}
+                      </div>
+                      {item.hasNotification && (
+                        <div className='absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse'></div>
+                      )}
+                    </div>
+                    <span className='text-sm font-medium text-gray-300 group-hover:text-white transition-colors'>
+                      {item.label}
+                    </span>
+                    <ChevronRight className='w-4 h-4 text-gray-500 group-hover:text-cyan-400 ml-auto transition-all duration-300 group-hover:translate-x-1' />
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className={styles.limitCard}>
-              <Mic className={styles.limitIcon} />
-              <div className={styles.limitInfo}>
-                <span className={styles.limitTitle}>Voice Gen</span>
-                <div className={styles.limitBar}>
-                  <div
-                    className={`${styles.limitProgress} ${styles.voiceProgress} ${styles.width40}`}
-                  ></div>
+            {/* Enhanced Daily Limits Panel */}
+            <div className='cyber-glass-purple rounded-3xl p-6 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 cyber-glow-purple'>
+              <h2 className='text-xl font-bold text-purple-300 mb-6 flex items-center space-x-3'>
+                <div className='p-2 bg-purple-500/20 rounded-lg'>
+                  <BarChart3 className='w-5 h-5' />
                 </div>
-                <span className={styles.limitText}>2/5 used</span>
-              </div>
-            </div>
+                <span>Neural Quotas</span>
+              </h2>
+              <div className='space-y-6'>
+                {/* AI Images */}
+                <div>
+                  <div className='flex items-center justify-between mb-2'>
+                    <div className='flex items-center space-x-3'>
+                      <div className='p-2 bg-cyan-500/20 rounded-lg'>
+                        <ImageIcon className='w-4 h-4 text-cyan-400' />
+                      </div>
+                      <span className='text-sm font-medium text-gray-300'>
+                        AI Images
+                      </span>
+                    </div>
+                    <span className='text-sm font-bold text-cyan-400'>
+                      {userData.usedLimits.images} /{' '}
+                      {userData.dailyLimits.images}
+                    </span>
+                  </div>
+                  <div className='relative w-full bg-gray-800/50 rounded-full h-3 overflow-hidden'>
+                    <div
+                      className='seraphine-progress-bar bg-gradient-to-r from-cyan-500 to-blue-500 h-3 rounded-full transition-all duration-500 cyber-glow'
+                      data-progress-width={`${(userData.usedLimits.images / userData.dailyLimits.images) * 100}%`}
+                    ></div>
+                  </div>
+                </div>
 
-            <div className={styles.limitCard}>
-              <Video className={styles.limitIcon} />
-              <div className={styles.limitInfo}>
-                <span className={styles.limitTitle}>Video Clips</span>
-                <div className={styles.limitBar}>
-                  <div
-                    className={`${styles.limitProgress} ${styles.videoProgress} ${styles.width100}`}
-                  ></div>
+                {/* Voice Generation */}
+                <div>
+                  <div className='flex items-center justify-between mb-2'>
+                    <div className='flex items-center space-x-3'>
+                      <div className='p-2 bg-purple-500/20 rounded-lg'>
+                        <Mic className='w-4 h-4 text-purple-400' />
+                      </div>
+                      <span className='text-sm font-medium text-gray-300'>
+                        Voice Synthesis
+                      </span>
+                    </div>
+                    <span className='text-sm font-bold text-purple-400'>
+                      {userData.usedLimits.voices} /{' '}
+                      {userData.dailyLimits.voices}
+                    </span>
+                  </div>
+                  <div className='relative w-full bg-gray-800/50 rounded-full h-3 overflow-hidden'>
+                    <div
+                      className='seraphine-progress-bar bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500 cyber-glow-purple'
+                      data-progress-width={`${(userData.usedLimits.voices / userData.dailyLimits.voices) * 100}%`}
+                    ></div>
+                  </div>
                 </div>
-                <span className={styles.limitText}>1/1 used</span>
+
+                {/* Video Clips */}
+                <div>
+                  <div className='flex items-center justify-between mb-2'>
+                    <div className='flex items-center space-x-3'>
+                      <div className='p-2 bg-orange-500/20 rounded-lg'>
+                        <Video className='w-4 h-4 text-orange-400' />
+                      </div>
+                      <span className='text-sm font-medium text-gray-300'>
+                        Video Clips
+                      </span>
+                    </div>
+                    <span className='text-sm font-bold text-orange-400'>
+                      {userData.usedLimits.videos} /{' '}
+                      {userData.dailyLimits.videos}
+                    </span>
+                  </div>
+                  <div className='relative w-full bg-gray-800/50 rounded-full h-3 overflow-hidden'>
+                    <div
+                      className='seraphine-progress-bar bg-gradient-to-r from-orange-500 to-red-500 h-3 rounded-full transition-all duration-500 cyber-glow-gold'
+                      data-progress-width={`${(userData.usedLimits.videos / userData.dailyLimits.videos) * 100}%`}
+                    ></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </section>
 
-        {/* Premium Preview */}
-        <section className={styles.premiumPreview}>
-          <div className={styles.premiumCard}>
-            <div className={styles.premiumHeader}>
-              <Crown className={styles.premiumIcon} />
-              <div className={styles.premiumText}>
-                <h3 className={styles.premiumTitle}>Upgrade to Premium</h3>
-                <p className={styles.premiumDesc}>
-                  Unlock unlimited AI generation, advanced features, and
-                  priority support
+          {/* Enhanced Main Dashboard Grid */}
+          <div
+            className={`lg:col-span-3 ${isLoaded ? 'slide-in-right animate-delay-300' : 'opacity-0'}`}
+          >
+            <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'>
+              {dashboardFeatures.map((feature, index) => (
+                <button
+                  key={feature.id}
+                  onClick={feature.onClick}
+                  className={`
+                    cyber-card relative group p-8 rounded-3xl border backdrop-blur-xl transition-all duration-500
+                    ${
+                      feature.isPremium
+                        ? 'cyber-glass-purple border-purple-500/40 hover:border-purple-400'
+                        : 'cyber-glass-cyan border-cyan-500/30 hover:border-cyan-400'
+                    }
+                    ${feature.isLocked ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'}
+                    slide-in-up animate-delay-${(index + 1) * 100}
+                  `}
+                  disabled={feature.isLocked}
+                >
+                  {/* Enhanced New Badge */}
+                  {feature.isNew && (
+                    <div className='absolute -top-3 -right-3 bg-gradient-to-r from-green-400 to-emerald-500 text-black text-xs font-bold px-3 py-1 rounded-full cyber-glow shadow-lg'>
+                      <Sparkles className='w-3 h-3 inline mr-1' />
+                      NEW
+                    </div>
+                  )}
+
+                  {/* Enhanced Lock Icon */}
+                  {feature.isLocked && (
+                    <div className='absolute top-6 right-6 p-2 bg-yellow-500/20 rounded-lg border border-yellow-500/40'>
+                      <Lock className='w-5 h-5 text-yellow-400' />
+                    </div>
+                  )}
+
+                  {/* Feature Content */}
+                  <div className='flex flex-col items-center text-center space-y-6'>
+                    <div
+                      className={`
+                      p-6 rounded-2xl border transition-all duration-500 cyber-icon
+                      ${
+                        feature.isPremium
+                          ? 'cyber-glass-purple border-purple-500/40 text-purple-400'
+                          : 'cyber-glass-cyan border-cyan-500/40 text-cyan-400'
+                      }
+                      group-hover:scale-110 group-hover:rotate-3
+                    `}
+                    >
+                      {feature.icon}
+                    </div>
+
+                    <div>
+                      <h3
+                        className={`
+                        text-xl font-bold mb-3 transition-all duration-300
+                        ${feature.isPremium ? 'text-purple-300' : 'text-cyan-300'}
+                        group-hover:text-white
+                      `}
+                      >
+                        {feature.title}
+                      </h3>
+                      <p className='text-sm text-gray-400 group-hover:text-gray-300 transition-all duration-300 leading-relaxed'>
+                        {feature.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Enhanced Glow Effect */}
+                  <div
+                    className={`
+                    absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none
+                    ${
+                      feature.isPremium
+                        ? 'bg-gradient-to-br from-purple-500/20 to-pink-500/20'
+                        : 'bg-gradient-to-br from-cyan-500/20 to-blue-500/20'
+                    }
+                  `}
+                  ></div>
+                </button>
+              ))}
+
+              {/* Enhanced Premium CTA Card */}
+              <button
+                onClick={handleUpgrade}
+                className='cyber-card relative group p-8 rounded-3xl premium-card transition-all duration-500 hover:scale-105 cyber-glow-gold md:col-span-2 xl:col-span-3 slide-in-up animate-delay-600'
+              >
+                <div className='flex items-center justify-center space-x-8'>
+                  <div className='relative'>
+                    <div className='p-6 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-2xl border border-purple-400/50 cyber-glow-purple'>
+                      <Crown className='w-12 h-12 text-yellow-400' />
+                    </div>
+                    <div className='absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center'>
+                      <Star className='w-3 h-3 text-black' />
+                    </div>
+                  </div>
+                  <div className='text-center flex-1'>
+                    <h3 className='text-3xl font-bold bg-gradient-to-r from-purple-300 via-pink-300 to-yellow-300 bg-clip-text text-transparent mb-4'>
+                      Unlock Neural Supremacy
+                    </h3>
+                    <p className='text-gray-300 mb-6 text-lg'>
+                      Ascend to unlimited AI generation, exclusive neural tools,
+                      and premium system access
+                    </p>
+                    <div className='grid grid-cols-2 md:grid-cols-4 gap-4 text-sm'>
+                      <div className='flex items-center space-x-2 text-purple-300'>
+                        <div className='w-2 h-2 bg-purple-400 rounded-full'></div>
+                        <span>∞ Neural Credits</span>
+                      </div>
+                      <div className='flex items-center space-x-2 text-cyan-300'>
+                        <div className='w-2 h-2 bg-cyan-400 rounded-full'></div>
+                        <span>Canvas Editor</span>
+                      </div>
+                      <div className='flex items-center space-x-2 text-pink-300'>
+                        <div className='w-2 h-2 bg-pink-400 rounded-full'></div>
+                        <span>Premium Styles</span>
+                      </div>
+                      <div className='flex items-center space-x-2 text-yellow-300'>
+                        <div className='w-2 h-2 bg-yellow-400 rounded-full'></div>
+                        <span>Priority Matrix</span>
+                      </div>
+                    </div>
+                  </div>
+                  <ChevronRight className='w-8 h-8 text-purple-300 group-hover:translate-x-2 group-hover:text-yellow-400 transition-all duration-300' />
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Floating Seraphine Avatar */}
+      <div className='fixed bottom-8 right-8 z-20'>
+        <div className='seraphine-float'>
+          <div className='relative group cursor-pointer'>
+            <div className='w-20 h-20 rounded-full border-2 border-cyan-500/50 cyber-glow-cyan p-1 hover:border-purple-500/50 hover:cyber-glow-purple transition-all duration-300'>
+              <img
+                src='/assets/splash/SeraphineAvatar.gif'
+                alt='Seraphine AI Companion'
+                className='w-full h-full rounded-full object-cover'
+              />
+            </div>
+            <div className='absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center cyber-glow'>
+              <Eye className='w-3 h-3 text-black' />
+            </div>
+            {/* Tooltip */}
+            <div className='absolute bottom-full right-0 mb-2 px-3 py-1 bg-black/90 text-cyan-400 text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap'>
+              Seraphine AI • Online
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Premium Welcome Modal */}
+      {showPremiumModal && (
+        <div className='fixed inset-0 z-50 premium-modal flex items-center justify-center p-4'>
+          <div className='relative w-full max-w-2xl'>
+            <div className='premium-card rounded-3xl p-8 cyber-glow-purple'>
+              {/* Close Button */}
+              <button
+                onClick={() => setShowPremiumModal(false)}
+                className='absolute top-6 right-6 p-2 cyber-glass rounded-xl border border-gray-700 hover:border-red-500/50 transition-all duration-300 group'
+                aria-label='Close premium modal'
+                title='Close'
+              >
+                <X className='w-5 h-5 text-gray-400 group-hover:text-red-400' />
+              </button>
+
+              {/* Modal Content */}
+              <div className='text-center space-y-8'>
+                {/* Header */}
+                <div className='space-y-4'>
+                  <div className='flex justify-center'>
+                    <div className='relative'>
+                      <div className='p-6 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-3xl border border-purple-400/50 cyber-glow-purple'>
+                        <Crown className='w-16 h-16 text-yellow-400' />
+                      </div>
+                      <div className='absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center cyber-glow-gold'>
+                        <Sparkles className='w-4 h-4 text-black' />
+                      </div>
+                    </div>
+                  </div>
+                  <h2 className='text-4xl font-bold gradient-text-animate'>
+                    Unlock the Full Power of Seraphine
+                  </h2>
+                  <p className='text-xl text-gray-300'>
+                    Transcend limitations. Embrace neural supremacy.
+                  </p>
+                </div>
+
+                {/* Features Grid */}
+                <div className='grid grid-cols-2 gap-6'>
+                  <div className='cyber-glass-cyan p-6 rounded-2xl border border-cyan-500/30'>
+                    <div className='flex items-center space-x-3 mb-3'>
+                      <div className='p-2 bg-cyan-500/20 rounded-lg'>
+                        <Zap className='w-5 h-5 text-cyan-400' />
+                      </div>
+                      <span className='font-bold text-cyan-300'>
+                        Unlimited Neural Credits
+                      </span>
+                    </div>
+                    <p className='text-sm text-gray-400'>
+                      Infinite AI generation power
+                    </p>
+                  </div>
+
+                  <div className='cyber-glass-purple p-6 rounded-2xl border border-purple-500/30'>
+                    <div className='flex items-center space-x-3 mb-3'>
+                      <div className='p-2 bg-purple-500/20 rounded-lg'>
+                        <Layers className='w-5 h-5 text-purple-400' />
+                      </div>
+                      <span className='font-bold text-purple-300'>
+                        Canvas AI Editor
+                      </span>
+                    </div>
+                    <p className='text-sm text-gray-400'>
+                      Professional editing suite
+                    </p>
+                  </div>
+
+                  <div className='cyber-glass p-6 rounded-2xl border border-pink-500/30'>
+                    <div className='flex items-center space-x-3 mb-3'>
+                      <div className='p-2 bg-pink-500/20 rounded-lg'>
+                        <Mic className='w-5 h-5 text-pink-400' />
+                      </div>
+                      <span className='font-bold text-pink-300'>
+                        Advanced Voice Gen
+                      </span>
+                    </div>
+                    <p className='text-sm text-gray-400'>
+                      Premium voice synthesis
+                    </p>
+                  </div>
+
+                  <div className='cyber-glass-cyan p-6 rounded-2xl border border-yellow-500/30'>
+                    <div className='flex items-center space-x-3 mb-3'>
+                      <div className='p-2 bg-yellow-500/20 rounded-lg'>
+                        <Headphones className='w-5 h-5 text-yellow-400' />
+                      </div>
+                      <span className='font-bold text-yellow-300'>
+                        Priority AI Support
+                      </span>
+                    </div>
+                    <p className='text-sm text-gray-400'>
+                      Dedicated neural assistance
+                    </p>
+                  </div>
+                </div>
+
+                {/* CTA Buttons */}
+                <div className='flex flex-col sm:flex-row gap-4 justify-center'>
+                  <button
+                    onClick={() => {
+                      setShowPremiumModal(false);
+                      handleUpgrade();
+                    }}
+                    className='flex-1 cyber-glass-purple px-8 py-4 rounded-2xl border border-purple-500/50 hover:border-purple-400 transition-all duration-300 cyber-glow-purple hover:scale-105 group'
+                  >
+                    <div className='flex items-center justify-center space-x-3'>
+                      <Crown className='w-5 h-5 text-yellow-400 group-hover:rotate-12 transition-transform duration-300' />
+                      <span className='font-bold text-lg text-white'>
+                        Upgrade Now
+                      </span>
+                      <ChevronRight className='w-5 h-5 text-purple-300 group-hover:translate-x-1 transition-transform duration-300' />
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setShowPremiumModal(false)}
+                    className='flex-1 cyber-glass px-8 py-4 rounded-2xl border border-gray-600 hover:border-gray-500 transition-all duration-300'
+                  >
+                    <span className='font-medium text-gray-300 hover:text-white transition-colors'>
+                      Continue with Free
+                    </span>
+                  </button>
+                </div>
+
+                {/* Disclaimer */}
+                <p className='text-xs text-gray-500'>
+                  Experience the future of AI-powered creativity
                 </p>
               </div>
             </div>
-            <button onClick={handleUpgrade} className={styles.upgradeButton}>
-              <Zap className={styles.upgradeIcon} />
-              Upgrade Now
-              <div className={styles.upgradeGlow}></div>
-            </button>
           </div>
-        </section>
-      </main>
-
-      {/* Modals/Panels */}
-      {activePanel === 'settings' && (
-        <UserSettingsPanel isVisible={true} onClose={handlePanelClose} />
+        </div>
       )}
 
-      {activePanel === 'library' && (
-        <StudioLibrary isVisible={true} onClose={handlePanelClose} />
-      )}
-
-      {activePanel === 'ai-features' && (
-        <MiniAIFeatures
-          isVisible={true}
-          onClose={handlePanelClose}
-          onUpgrade={handleUpgrade}
-        />
-      )}
-
-      {activePanel === 'invite' && (
-        <InviteTokenPanel
-          isVisible={true}
-          onClose={handlePanelClose}
-          userTokens={userData.tokens}
-        />
-      )}
-
-      {activePanel === 'shop' && (
-        <ShopPanel
-          isVisible={true}
-          onClose={handlePanelClose}
-          userTokens={userData.tokens}
-          onUpgrade={handleUpgrade}
-        />
-      )}
-
-      {activePanel === 'canvas' && (
-        <CanvasAIEditor
-          isVisible={true}
-          onClose={handlePanelClose}
-          onSave={canvas => {
-            console.log('Canvas saved:', canvas);
-            // Implement save logic
-          }}
-        />
-      )}
-
-      {activePanel === 'tokens' && (
-        <NeuralTokenSystem
-          isVisible={true}
-          onClose={handlePanelClose}
-          currentTokens={userData.tokens}
-          onPurchase={handleTokenPurchase}
+      {/* Voice Command System */}
+      {voiceEnabled && (
+        <VoiceCommandSystem
+          isActive={voiceEnabled}
+          onToggle={() => setVoiceEnabled(!voiceEnabled)}
           userLevel='free'
         />
       )}
 
-      {activePanel === 'login' && (
-        <LoginSystem
-          isVisible={true}
-          onClose={handlePanelClose}
-          onLoginSuccess={userType => {
-            console.log('Login success:', userType);
-            handlePanelClose();
-          }}
-        />
+      {/* Modal Panels */}
+      {activePanel === 'ai-features' && (
+        <div className='fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4'>
+          <div className='relative w-full max-w-4xl max-h-[90vh] overflow-auto'>
+            <AIImageGenerationPanel
+              onClose={handlePanelClose}
+              isVisible={true}
+              userTokens={userData.tokens}
+              userTier='free'
+              onTokensUpdate={newTokens =>
+                setUserData(prev => ({ ...prev, tokens: newTokens }))
+              }
+            />
+          </div>
+        </div>
       )}
 
-      {activePanel === 'ai-generator' && (
-        <AIImageGenerationPanel
-          isVisible={true}
+      {activePanel === 'library' && (
+        <MyLibraryPanel
           onClose={handlePanelClose}
-          userTokens={userData.tokens}
-          onTokensUpdate={(newTokens: number) => {
-            setUserData(prev => ({ ...prev, tokens: newTokens }));
-          }}
+          isVisible={true}
           userTier='free'
         />
       )}
 
-      {activePanel === 'style-library' && (
-        <SeraphineStyleLibrary
-          isVisible={true}
-          onClose={handlePanelClose}
-          userTier='free'
-          onSelectStyle={style => {
-            console.log('Selected style:', style);
-            handlePanelClose();
-          }}
-        />
+      {activePanel === 'canvas' && (
+        <div className='fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4'>
+          <div className='relative w-full max-w-6xl max-h-[90vh] overflow-auto'>
+            <CanvasAIEditor onClose={handlePanelClose} isVisible={true} />
+          </div>
+        </div>
       )}
 
-      {activePanel === 'prompt-archive' && (
-        <NeuralPromptArchive
-          isVisible={true}
-          onClose={handlePanelClose}
-          onRunPrompt={prompt => {
-            console.log('Running prompt:', prompt);
-            // Route to AI generator with pre-filled prompt
-            handlePanelClose();
-            setTimeout(() => setActivePanel('ai-generator'), 300);
-          }}
-        />
+      {activePanel === 'settings' && (
+        <div className='fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4'>
+          <div className='relative w-full max-w-2xl max-h-[90vh] overflow-auto'>
+            <UserSettingsPanel onClose={handlePanelClose} isVisible={true} />
+          </div>
+        </div>
+      )}
+
+      {activePanel === 'invite' && (
+        <div className='fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4'>
+          <div className='relative w-full max-w-2xl max-h-[90vh] overflow-auto'>
+            <InviteTokenPanel
+              onClose={handlePanelClose}
+              isVisible={true}
+              userTokens={userData.tokens}
+            />
+          </div>
+        </div>
+      )}
+
+      {activePanel === 'shop' && (
+        <div className='fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4'>
+          <div className='relative w-full max-w-4xl max-h-[90vh] overflow-auto'>
+            <ShopPanel
+              onClose={handlePanelClose}
+              isVisible={true}
+              userTokens={userData.tokens}
+              onUpgrade={handleUpgrade}
+            />
+          </div>
+        </div>
       )}
 
       {showSubscription && (
         <SubscriptionPopup
-          isVisible={true}
           onClose={() => setShowSubscription(false)}
-          onSubscribe={plan => {
-            console.log('Subscribing to:', plan);
+          isVisible={true}
+          onSubscribe={() => {
+            setShowSubscription(false);
             router.push('/dashboard/premium');
           }}
         />
       )}
-
-      <Suspense fallback={null}>
-        <SearchParamsHandler onShowSubscription={setShowSubscription} />
-      </Suspense>
-
-      {/* Voice Command System */}
-      <VoiceCommandSystem
-        isActive={voiceControlActive}
-        onToggle={() => setVoiceControlActive(!voiceControlActive)}
-        onCommand={handleVoiceCommand}
-        userLevel='free'
-      />
-
-      {/* Seraphine Avatar */}
-      <SeraphineAvatar
-        isVisible={seraphineVisible}
-        mood={seraphineMood}
-        voiceEnabled={true}
-        interactionMode='assistant'
-        onCommand={handleSeraphineCommand}
-        onToggleChat={() =>
-          setSeraphineMood(seraphineMood === 'idle' ? 'active' : 'idle')
-        }
-        beatSync={true}
-        beatData={beatData}
-      />
-
-      {/* Cyberpunk Audio System */}
-      <CyberpunkAudioSystem
-        isEnabled={audioEnabled}
-        volume={audioVolume}
-        onVolumeChange={setAudioVolume}
-        onToggle={setAudioEnabled}
-        beatSyncCallback={setBeatData}
-      />
     </div>
   );
-}
+};
+
+export default FreeDashboard;
