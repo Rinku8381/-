@@ -174,10 +174,15 @@ export default function SplashScreen(): JSX.Element {
     setShowTerms(false);
   };
 
-  const handleLogin = () => {
+  const handleLogin = (userType: string, redirectPath: string) => {
     setShowLogin(false);
     setTimeout(() => {
-      router.push('/dashboard');
+      // Show subscription popup for free users
+      if (userType === 'free') {
+        router.push('/dashboard/free?showSubscription=true');
+      } else {
+        router.push(redirectPath);
+      }
     }, 300);
   };
 

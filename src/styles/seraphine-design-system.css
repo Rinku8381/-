@@ -1,0 +1,557 @@
+/* ========================================
+   🌟 SERAPHINE HYBRID V1.5 DESIGN SYSTEM
+   ======================================== */
+
+:root {
+  /* 🎨 Primary Cyberpunk Palette */
+  --seraphine-cyan: #00ffff;
+  --seraphine-magenta: #ff00ff;
+  --seraphine-violet: #8b5cf6;
+  --seraphine-electric-blue: #0066ff;
+  --seraphine-neon-green: #39ff14;
+  --seraphine-plasma-pink: #ff1493;
+
+  /* 🌑 Dark Mode Foundation */
+  --seraphine-dark-bg: #0a0a0f;
+  --seraphine-dark-surface: #1a1a2e;
+  --seraphine-dark-elevated: #16213e;
+  --seraphine-dark-border: #2d3748;
+
+  /* ✨ Hologram & Glow Effects */
+  --seraphine-glow-cyan: 0 0 20px var(--seraphine-cyan);
+  --seraphine-glow-magenta: 0 0 20px var(--seraphine-magenta);
+  --seraphine-glow-violet: 0 0 20px var(--seraphine-violet);
+  --seraphine-glow-electric: 0 0 20px var(--seraphine-electric-blue);
+
+  /* 🔥 Gradient Combinations */
+  --seraphine-gradient-primary: linear-gradient(
+    135deg,
+    var(--seraphine-cyan),
+    var(--seraphine-magenta)
+  );
+  --seraphine-gradient-secondary: linear-gradient(
+    135deg,
+    var(--seraphine-violet),
+    var(--seraphine-electric-blue)
+  );
+  --seraphine-gradient-hologram: linear-gradient(
+    135deg,
+    rgba(0, 255, 255, 0.1),
+    rgba(255, 0, 255, 0.1)
+  );
+
+  /* 🎵 Animation Timings (Synced with Audio) */
+  --seraphine-beat-fast: 0.15s;
+  --seraphine-beat-normal: 0.3s;
+  --seraphine-beat-slow: 0.6s;
+  --seraphine-pulse-rhythm: 1.2s;
+}
+
+/* ========================================
+   🌟 CYBERPUNK UI COMPONENTS
+   ======================================== */
+
+/* 🔮 Holographic Panel Base */
+.seraphine-holo-panel {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 255, 0.03) 0%,
+    rgba(255, 0, 255, 0.03) 50%,
+    rgba(139, 92, 246, 0.03) 100%
+  );
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 12px;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.seraphine-holo-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 255, 255, 0.1),
+    transparent
+  );
+  animation: seraphineHoloScan 3s infinite;
+}
+
+@keyframes seraphineHoloScan {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* 🎯 Neural Button System */
+.seraphine-neural-btn {
+  background: var(--seraphine-gradient-primary);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  color: #000;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--seraphine-beat-normal) ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.seraphine-neural-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--seraphine-glow-cyan);
+}
+
+.seraphine-neural-btn:active {
+  transform: translateY(0);
+}
+
+.seraphine-neural-btn.secondary {
+  background: var(--seraphine-gradient-secondary);
+  color: white;
+}
+
+.seraphine-neural-btn.ghost {
+  background: transparent;
+  border: 1px solid var(--seraphine-cyan);
+  color: var(--seraphine-cyan);
+}
+
+.seraphine-neural-btn.ghost:hover {
+  background: rgba(0, 255, 255, 0.1);
+  box-shadow: var(--seraphine-glow-cyan);
+}
+
+/* ⚡ Plasma Loading Orb */
+.seraphine-plasma-orb {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    var(--seraphine-cyan),
+    var(--seraphine-magenta),
+    var(--seraphine-violet)
+  );
+  animation: seraphineOrbPulse var(--seraphine-pulse-rhythm) infinite alternate;
+  box-shadow: var(--seraphine-glow-cyan);
+  position: relative;
+}
+
+.seraphine-plasma-orb::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    transparent 40%,
+    rgba(255, 255, 255, 0.3) 70%
+  );
+  animation: seraphineOrbRotate 4s linear infinite;
+}
+
+@keyframes seraphineOrbPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 20px var(--seraphine-cyan);
+  }
+  100% {
+    transform: scale(1.1);
+    box-shadow: 0 0 40px var(--seraphine-magenta);
+  }
+}
+
+@keyframes seraphineOrbRotate {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* 🌟 Token Meter System */
+.seraphine-token-meter {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--seraphine-cyan);
+  border-radius: 20px;
+  height: 24px;
+  overflow: hidden;
+  position: relative;
+}
+
+.seraphine-token-progress {
+  height: 100%;
+  background: var(--seraphine-gradient-primary);
+  border-radius: 20px;
+  position: relative;
+  animation: seraphineTokenGlow 2s ease-in-out infinite alternate;
+}
+
+.seraphine-token-progress::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: seraphineTokenScan 1.5s infinite;
+}
+
+/* 🔋 Token Progress Widths */
+.seraphine-token-progress-dynamic {
+  transition: width 0.3s ease;
+}
+
+@keyframes seraphineTokenGlow {
+  0% {
+    box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.5);
+  }
+  100% {
+    box-shadow: inset 0 0 20px rgba(255, 0, 255, 0.8);
+  }
+}
+
+@keyframes seraphineTokenScan {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* 🎭 Glitch Effect */
+.seraphine-glitch {
+  position: relative;
+}
+
+.seraphine-glitch::before,
+.seraphine-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.seraphine-glitch::before {
+  animation: seraphineGlitchTop 0.5s infinite;
+  color: var(--seraphine-cyan);
+  z-index: -1;
+}
+
+.seraphine-glitch::after {
+  animation: seraphineGlitchBottom 0.7s infinite;
+  color: var(--seraphine-magenta);
+  z-index: -2;
+}
+
+@keyframes seraphineGlitchTop {
+  0%,
+  14%,
+  16%,
+  18%,
+  42%,
+  44%,
+  92%,
+  94%,
+  96%,
+  100% {
+    transform: translate(0);
+  }
+  15%,
+  17% {
+    transform: translate(-2px, -1px);
+  }
+  43% {
+    transform: translate(-1px, 1px);
+  }
+  93%,
+  95% {
+    transform: translate(2px, 1px);
+  }
+}
+
+@keyframes seraphineGlitchBottom {
+  0%,
+  15%,
+  17%,
+  19%,
+  41%,
+  43%,
+  91%,
+  93%,
+  95%,
+  100% {
+    transform: translate(0);
+  }
+  16%,
+  18% {
+    transform: translate(2px, 1px);
+  }
+  42% {
+    transform: translate(1px, -1px);
+  }
+  92%,
+  94% {
+    transform: translate(-2px, -1px);
+  }
+}
+
+/* 🎨 Particle Canvas */
+.seraphine-particle-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  background: transparent;
+  mix-blend-mode: screen;
+}
+
+/* 🌊 Rising Particles Background */
+.seraphine-particle-field {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.seraphine-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--seraphine-cyan);
+  border-radius: 50%;
+  animation: seraphineParticleRise linear infinite;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.seraphine-particle:nth-child(2n) {
+  background: var(--seraphine-magenta);
+  animation-delay: -1s;
+}
+
+.seraphine-particle:nth-child(3n) {
+  background: var(--seraphine-violet);
+  animation-delay: -2s;
+}
+
+.seraphine-particle:nth-child(4n) {
+  background: var(--seraphine-electric-blue);
+  animation-delay: -3s;
+}
+
+@keyframes seraphineParticleRise {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-10vh) scale(1);
+    opacity: 0;
+  }
+}
+
+/* 🎪 Portal Entry Effect */
+.seraphine-portal-entry {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--seraphine-cyan) 0%,
+    var(--seraphine-magenta) 50%,
+    transparent 70%
+  );
+  animation: seraphinePortalOpen 2s ease-out forwards;
+  z-index: 1000;
+}
+
+@keyframes seraphinePortalOpen {
+  0% {
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* 🌐 Neural Grid Background */
+.seraphine-neural-grid {
+  background-image:
+    linear-gradient(rgba(0, 255, 255, 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.2) 1px, transparent 1px);
+  background-size: 20px 20px;
+  width: 100%;
+  height: 100%;
+  opacity: 0.1;
+}
+
+.seraphine-neural-grid.large {
+  background-size: 50px 50px;
+}
+
+.seraphine-neural-grid.small {
+  background-size: 10px 10px;
+}
+
+/* 🎯 Loading Dot Animation */
+.seraphine-loading-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--seraphine-cyan);
+  animation: seraphineOrbPulse 0.6s ease-in-out infinite;
+}
+
+.seraphine-loading-dot.delay-1 {
+  animation-delay: 0.1s;
+}
+
+.seraphine-loading-dot.delay-2 {
+  animation-delay: 0.2s;
+}
+
+.seraphine-loading-dot.delay-3 {
+  animation-delay: 0.3s;
+}
+
+.seraphine-loading-dot.delay-4 {
+  animation-delay: 0.4s;
+}
+
+/* ⌨️ Typing Effect */
+.typing-effect {
+  border-right: 2px solid var(--seraphine-cyan);
+  animation: seraphineTypingCursor 1s infinite;
+}
+
+@keyframes seraphineTypingCursor {
+  0%,
+  50% {
+    border-color: var(--seraphine-cyan);
+  }
+  51%,
+  100% {
+    border-color: transparent;
+  }
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 768px) {
+  .seraphine-holo-panel {
+    border-radius: 8px;
+    margin: 8px;
+  }
+
+  .seraphine-neural-btn {
+    padding: 10px 20px;
+    font-size: 12px;
+  }
+
+  .seraphine-plasma-orb {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* 🎵 Music Sync Animations */
+.seraphine-beat-sync {
+  animation: seraphineBeatPulse var(--seraphine-beat-normal) ease-in-out
+    infinite;
+}
+
+@keyframes seraphineBeatPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.seraphine-beat-sync.fast {
+  animation-duration: var(--seraphine-beat-fast);
+}
+
+.seraphine-beat-sync.slow {
+  animation-duration: var(--seraphine-beat-slow);
+}
+
+/* 🌊 Waveform Visualization */
+.seraphine-waveform-bar {
+  background: var(--seraphine-cyan);
+  width: 4px;
+  border-radius: 2px;
+  transition: height 75ms ease;
+  min-height: 2px;
+  height: var(--bar-height, 4px);
+}
+
+.seraphine-confidence-bar {
+  height: 4px;
+  background: #374151;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.seraphine-confidence-fill {
+  height: 100%;
+  background: var(--seraphine-cyan);
+  border-radius: 2px;
+  width: var(--confidence-width, 0%);
+  transition: width 200ms ease;
+}
+  transition: width 0.3s ease;
+}
